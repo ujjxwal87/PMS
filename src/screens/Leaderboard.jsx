@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Btn, Eyebrow, Meter, RailBlock, Segmented } from '../components/ui.jsx'
 import StrategyPicker from '../components/StrategyPicker.jsx'
+import MetricGuide from '../components/MetricGuide.jsx'
 import { useApp } from '../state.jsx'
 import { LENSES, PERIODS, PERIOD_LABEL } from '../data/strategies.js'
 import { lensMovers, scoreUniverse } from '../lib/scoring.js'
@@ -185,6 +186,10 @@ export default function Leaderboard() {
           <Btn block onClick={() => navigate('/compare')} disabled={basket.length < 2}>
             {basket.length < 2 ? 'Pick at least two' : `Compare these ${basket.length}`}
           </Btn>
+        </RailBlock>
+
+        <RailBlock label="How to read the columns" style={{ gap: 14 }}>
+          <MetricGuide />
         </RailBlock>
       </aside>
     </div>

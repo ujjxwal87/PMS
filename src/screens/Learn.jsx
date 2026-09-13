@@ -32,12 +32,14 @@ export default function Learn() {
 
       <aside className="rail">
         <RailBlock label="Glossary" style={{ gap: 14 }}>
-          {GLOSSARY.map((g) => (
-            <div key={g.term} className="stack" style={{ gap: 3 }}>
-              <span style={{ fontSize: 14.5, fontWeight: 700 }}>{g.term}</span>
-              <span style={{ fontSize: 13.5, lineHeight: 1.5, color: 'var(--ink-2)' }}>{g.body}</span>
-            </div>
-          ))}
+          <dl className="glossary">
+            {GLOSSARY.map((g) => (
+              <div key={g.term} className="glossary__item">
+                <dt className="glossary__term">{g.term}</dt>
+                <dd className="glossary__body">{g.body}</dd>
+              </div>
+            ))}
+          </dl>
         </RailBlock>
 
         <RailBlock label="Still unsure?" style={{ gap: 10 }}>

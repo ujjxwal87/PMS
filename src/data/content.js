@@ -84,6 +84,30 @@ export const GLOSSARY = [
   { term: 'Catch-up', body: 'A clause letting the manager take a larger share once the hurdle is cleared. Read it before the headline rate.' },
 ]
 
+// The four leaderboard metrics, each with a worked example drawn from the universe above.
+export const METRIC_GUIDE = [
+  {
+    term: 'CAGR',
+    body: 'The single annual rate that turns your starting amount into what the account is worth today. It smooths the good and bad years into one number.',
+    example: 'Northwick’s 24.6% five-year CAGR means ₹50 lakh put in five years ago is worth about ₹1.5 crore now.',
+  },
+  {
+    term: 'Sharpe',
+    body: 'Return per unit of volatility. It asks how bumpy the ride was for the return you got — above 1.0 is respectable, above 1.3 is rare.',
+    example: 'Vireo (1.42) and Karanth (1.09) both returned about 21% a year, but Vireo got there with far less lurching.',
+  },
+  {
+    term: 'Upside capture',
+    body: 'In the quarters the market rose, what share of that rise did the strategy capture? Above 100% means it outran the index on the way up.',
+    example: 'Aldern captures 131%: in a quarter the index gained 10%, Aldern gained roughly 13%.',
+  },
+  {
+    term: 'Downside capture',
+    body: 'In the quarters the market fell, what share of that fall did the strategy take? Lower is better, and under 80% is uncommon.',
+    example: 'Vireo takes 71%: when the index fell 10%, Vireo fell about 7%. Aldern’s 119% fell about 12%.',
+  },
+]
+
 export const PLANS = [
   {
     name: 'Investor', price: '₹24,000', per: 'a year', who: 'One HNI investor, one login',
