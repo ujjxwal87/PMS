@@ -14,8 +14,8 @@ export function AppProvider({ children }) {
   const [basket, setBasket] = useState(COMPARE_SET)
   const [pick, setPick] = useState('Northwick Emerging Leaders')
   const [plan, setPlan] = useState('Investor')
-  // What the investor can put in; Infinity means show everything.
-  const [budget, setBudget] = useState(Infinity)
+  // Which minimum-ticket band to show; 'any' shows everything.
+  const [band, setBand] = useState('any')
   // The Custom lens starts from Balanced so the first drag has somewhere to move from.
   const [customWeights, setCustomWeights] = useState(LENSES.Balanced.weights)
 
@@ -36,13 +36,13 @@ export function AppProvider({ children }) {
         ),
       pick, setPick,
       plan, setPlan,
-      budget, setBudget,
+      band, setBand,
       customWeights,
       setCustomWeight: (index, value) =>
         setCustomWeights((cur) => redistribute(cur, index, value)),
       resetCustomWeights: () => setCustomWeights(LENSES.Balanced.weights),
     }),
-    [period, lens, chips, basket, pick, plan, customWeights, budget],
+    [period, lens, chips, basket, pick, plan, customWeights, band],
   )
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

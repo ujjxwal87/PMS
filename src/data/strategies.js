@@ -44,13 +44,22 @@ export const LENSES = {
   },
 }
 
-// SEBI sets a ₹50 lakh floor for any PMS account, so that is the tightest rung.
-export const BUDGETS = [
-  { label: 'Any', value: Infinity },
-  { label: '₹50 L', value: 5000000 },
-  { label: '₹1 cr', value: 10000000 },
-  { label: '₹5 cr', value: 50000000 },
+// Bands over a strategy's minimum ticket. SEBI sets a ₹50 lakh floor on any PMS
+// account, so the entry band starts there. Each band is (lo, hi] so they tile
+// the range without overlapping.
+export const MIN_BANDS = [
+  { id: 'any', label: 'Any', lo: -1, hi: Infinity },
+  { id: 'entry', label: '₹50 L', lo: -1, hi: 5000000 },
+  { id: 'mid', label: '₹50 L – ₹1 cr', lo: 5000000, hi: 10000000 },
+  { id: 'top', label: '₹1 cr +', lo: 10000000, hi: Infinity },
 ]
+
+export const bandFor = (id) => MIN_BANDS.find((b) => b.id === id) || MIN_BANDS[0]
+
+export const inBand = (strategy, id) => {
+  const b = bandFor(id)
+  return strategy.minInvestment > b.lo && strategy.minInvestment <= b.hi
+}
 
 export const SCREEN_CHIPS = ['Multi-cap', 'Mid-cap', 'Min ≤ ₹50 L', 'Low drawdown', 'CIO tenure ≥ 5 yr']
 

@@ -4,7 +4,7 @@ import StrategyPicker from '../components/StrategyPicker.jsx'
 import MetricGuide from '../components/MetricGuide.jsx'
 import FirmMark from '../components/FirmMark.jsx'
 import { useApp } from '../state.jsx'
-import { BUDGETS, LENSES, PERIODS, PERIOD_LABEL, STRATEGIES } from '../data/strategies.js'
+import { LENSES, MIN_BANDS, PERIODS, PERIOD_LABEL, STRATEGIES, bandFor, inBand } from '../data/strategies.js'
 import { lensMovers, scoreUniverse } from '../lib/scoring.js'
 import { CUSTOM_LENS, describeWeights } from '../lib/weights.js'
 import { pct, rank2, shortRupees } from '../lib/format.js'
@@ -16,7 +16,7 @@ export default function Leaderboard() {
   const {
     period, setPeriod, lens, setLens, basket, dropFromBasket,
     customWeights, setCustomWeight, resetCustomWeights,
-    budget, setBudget,
+    band, setBand,
   } = useApp()
 
   const isCustom = lens === CUSTOM_LENS
@@ -25,11 +25,11 @@ export default function Leaderboard() {
   const blurb = isCustom ? describeWeights(customWeights, weightLabels) : LENSES[lens].blurb
 
   const scored = scoreUniverse(weights, period)
-  // Rank the whole universe, then drop what the reader cannot actually open.
-  const ranked = scored.filter((r) => r.minInvestment <= budget)
+  // Rank the whole universe, then show only the minimum-ticket band asked for.
+  const ranked = scored.filter((r) => inBand(r, band))
   const movers = lensMovers(weights, period)
-  const budgetOn = budget !== Infinity
-  const hidden = scored.length - ranked.length
+  const bandOn = band !== 'any'
+  const bandLabel = bandFor(band).label
   const periodShort = period === '1M' ? '1M ret' : period === '1Y' ? '1Y ret' : `${period} CAGR`
 
   return (
@@ -56,15 +56,15 @@ export default function Leaderboard() {
           className="row wrap"
           style={{ padding: '12px var(--gutter)', gap: '10px 18px', alignItems: 'center', borderBottom: '1px solid var(--line)' }}
         >
-          <Eyebrow>I can invest</Eyebrow>
+          <Eyebrow>Minimum investment</Eyebrow>
           <Segmented
-            items={BUDGETS.map((b) => ({ label: b.label, value: b.value }))}
-            value={budget}
-            onChange={setBudget}
+            items={MIN_BANDS.map((b) => ({ label: b.label, value: b.id }))}
+            value={band}
+            onChange={setBand}
           />
           <span className="note" style={{ flex: 1, minWidth: 200 }}>
-            {budgetOn
-              ? `${ranked.length} of ${scored.length} strategies take ${BUDGETS.find((b) => b.value === budget).label} or less${hidden ? ` · ${hidden} hidden` : ''}`
+            {bandOn
+              ? `${ranked.length} of ${scored.length} strategies open at ${bandLabel}`
               : 'SEBI sets a ₹50 lakh floor on any PMS account, so nothing here opens for less.'}
           </span>
         </div>
@@ -133,8 +133,8 @@ export default function Leaderboard() {
 
             {ranked.length === 0 && (
               <div className="stack" style={{ padding: '32px 16px', gap: 6, alignItems: 'center', textAlign: 'center' }}>
-                <span className="serif" style={{ fontSize: 19, fontWeight: 700 }}>Nothing opens at that size</span>
-                <span className="note">Raise the amount, or read the Learn chapter on minimums.</span>
+                <span className="serif" style={{ fontSize: 19, fontWeight: 700 }}>No strategy in this band</span>
+                <span className="note">Try a different minimum, or read the Learn chapter on minimums.</span>
               </div>
             )}
             {ranked.map((r, i) => (
@@ -179,7 +179,7 @@ export default function Leaderboard() {
           </span>
           <span>
             {ranked.length} of {scored.length} shown · {lens} lens
-            {budgetOn && ` · min ≤ ${BUDGETS.find((b) => b.value === budget).label}`}
+            {bandOn && ` · minimum ${bandLabel}`}
           </span>
         </div>
       </div>
@@ -210,16 +210,11 @@ export default function Leaderboard() {
         <RailBlock label="Selected for comparison" style={{ gap: 10 }}>
           {basket.map((b) => {
             const min = STRATEGIES.find((s) => s.name === b)?.minInvestment
-            const overBudget = min > budget
             return (
               <div key={b} className="basket-row">
                 <span className="stack truncate" style={{ gap: 2 }}>
                   <span className="truncate">{b}</span>
-                  {overBudget && (
-                    <span style={{ fontSize: 12.5, color: 'var(--neg)' }}>
-                      Needs {shortRupees(min)}
-                    </span>
-                  )}
+                  {min && <span className="note" style={{ fontSize: 12.5 }}>Minimum {shortRupees(min)}</span>}
                 </span>
                 <button type="button" className="basket-row__drop" aria-label={`Remove ${b}`} onClick={() => dropFromBasket(b)}>
                   ×
