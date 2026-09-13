@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Btn, Eyebrow, RailBlock, SectionHead, Stat, TitleMeta } from '../components/ui.jsx'
 import { MANAGER } from '../data/content.js'
+import FirmMark from '../components/FirmMark.jsx'
 
 export default function ManagerProfile() {
   const navigate = useNavigate()
@@ -10,7 +11,8 @@ export default function ManagerProfile() {
     <div className="body-grid--fixed">
       <div className="main-col">
         <div className="banner-dark" style={{ display: 'flex', gap: 28, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-          <div className="stack" style={{ flex: 1, minWidth: 300, gap: 8 }}>
+          <FirmMark firm={m.firm} size={64} tone="dark" />
+          <div className="stack" style={{ flex: 1, minWidth: 280, gap: 8 }}>
             <Eyebrow tone="on-dark">{m.meta}</Eyebrow>
             <h2 style={{ fontSize: 34.5, lineHeight: 1.05 }}>{m.name}</h2>
             <span style={{ fontSize: 16, color: 'var(--on-dark-2)' }}>{m.role}</span>

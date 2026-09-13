@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Btn, Eyebrow, Meter, RailBlock, SectionHead, Stat, TitleMeta } from '../components/ui.jsx'
 import { HOLDINGS, STATEMENTS } from '../data/content.js'
+import FirmMark from '../components/FirmMark.jsx'
 import { lakhs } from '../lib/format.js'
 
 export default function Portfolio() {
@@ -35,6 +36,7 @@ export default function Portfolio() {
             const weight = Math.round((h.value / value) * 100)
             return (
               <div key={h.name} className="list-row" style={{ borderTop: '1px solid var(--line)', padding: '16px 0', gap: 22, flexWrap: 'wrap' }}>
+                <FirmMark firm={h.firm} size={40} />
                 <div className="stack" style={{ flex: 1, minWidth: 220, gap: 6 }}>
                   <span style={{ fontSize: 17.5, fontWeight: 700 }}>{h.name}</span>
                   <span className="note">{h.firm} · funded {h.since}</span>

@@ -2,13 +2,14 @@ import { useNavigate } from 'react-router-dom'
 import { Btn, Eyebrow, Meter, RailBlock, Segmented } from '../components/ui.jsx'
 import StrategyPicker from '../components/StrategyPicker.jsx'
 import MetricGuide from '../components/MetricGuide.jsx'
+import FirmMark from '../components/FirmMark.jsx'
 import { useApp } from '../state.jsx'
 import { LENSES, PERIODS, PERIOD_LABEL } from '../data/strategies.js'
 import { lensMovers, scoreUniverse } from '../lib/scoring.js'
 import { CUSTOM_LENS, describeWeights } from '../lib/weights.js'
 import { pct, rank2 } from '../lib/format.js'
 
-const GRID = '44px minmax(170px, 1.9fr) 136px 84px 72px 82px 100px 86px'
+const GRID = '44px minmax(208px, 1.9fr) 136px 84px 72px 82px 100px 86px'
 
 export default function Leaderboard() {
   const navigate = useNavigate()
@@ -95,7 +96,7 @@ export default function Leaderboard() {
         </div>
 
         <div className="tbl-scroll">
-          <div style={{ minWidth: 774 }}>
+          <div style={{ minWidth: 812 }}>
             <div className="tbl-head" style={{ display: 'grid', gridTemplateColumns: GRID }}>
               <div style={{ paddingLeft: 14 }}>#</div>
               <div style={{ padding: '10px' }}>Strategy · firm</div>
@@ -116,9 +117,12 @@ export default function Leaderboard() {
                 <div className="num" style={{ padding: '0 0 0 14px', fontSize: 13.5, fontWeight: 700, color: 'var(--gold-ink)' }}>
                   {rank2(i)}
                 </div>
-                <div className="stack" style={{ padding: '12px 10px', gap: 2, minWidth: 0 }}>
-                  <span className="truncate" style={{ fontWeight: 700 }}>{r.name}</span>
-                  <span style={{ fontSize: 13.5, color: 'var(--muted)' }}>{r.firm}</span>
+                <div className="row" style={{ padding: '12px 10px', gap: 10, minWidth: 0 }}>
+                  <FirmMark firm={r.firm} size={30} />
+                  <div className="stack" style={{ gap: 2, minWidth: 0 }}>
+                    <span className="truncate" style={{ fontWeight: 700 }}>{r.name}</span>
+                    <span style={{ fontSize: 13.5, color: 'var(--muted)' }}>{r.firm}</span>
+                  </div>
                 </div>
                 <div className="row" style={{ gap: 8 }}>
                   <Meter value={((r.score - 55) / 45) * 100} style={{ flex: 1 }} />

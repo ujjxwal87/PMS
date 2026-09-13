@@ -1,5 +1,6 @@
 import { Btn, Eyebrow, NoteCard } from '../components/ui.jsx'
 import StrategyPicker from '../components/StrategyPicker.jsx'
+import FirmMark from '../components/FirmMark.jsx'
 import { useApp } from '../state.jsx'
 import { STRATEGIES } from '../data/strategies.js'
 import { crores, pct } from '../lib/format.js'
@@ -82,8 +83,9 @@ export default function Compare() {
               <div
                 key={s.name}
                 className="stack"
-                style={{ background: 'var(--ink)', color: 'var(--on-dark)', padding: '16px 18px', gap: 4, borderLeft: '1px solid rgba(244,240,228,0.2)' }}
+                style={{ background: 'var(--ink)', color: 'var(--on-dark)', padding: '16px 18px', gap: 6, borderLeft: '1px solid rgba(244,240,228,0.2)' }}
               >
+                <FirmMark firm={s.firm} size={30} tone="dark" />
                 <span className="serif" style={{ fontSize: 18.5, fontWeight: 700, lineHeight: 1.2 }}>{s.name}</span>
                 <span style={{ fontSize: 13.5, color: 'var(--on-dark-4)' }}>{s.firm}</span>
               </div>

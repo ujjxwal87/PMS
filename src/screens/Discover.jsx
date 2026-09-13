@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Btn, Eyebrow, KV, RailBlock, Segmented, SectionHead, TitleMeta } from '../components/ui.jsx'
 import UniverseChart from '../components/UniverseChart.jsx'
+import FirmMark from '../components/FirmMark.jsx'
 import { useApp } from '../state.jsx'
 import { DISCOVER_NOTES, PERIODS, PERIOD_LABEL, RETURNS, SCREEN_CHIPS, STRATEGIES } from '../data/strategies.js'
 import { NEWS } from '../data/content.js'
@@ -67,6 +68,7 @@ export default function Discover() {
           {rows.map((r, i) => (
             <div key={r.name} className="list-row" style={{ borderTop: '1px solid var(--line)' }}>
               <span className="rank-no num">{rank2(i)}</span>
+              <FirmMark firm={r.firm} size={34} />
               <div className="stack" style={{ flex: 1, minWidth: 0, gap: 2 }}>
                 <span style={{ fontSize: 18, fontWeight: 700 }}>{r.name}</span>
                 <span className="note">

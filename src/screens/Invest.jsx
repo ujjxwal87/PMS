@@ -5,6 +5,7 @@ import { useApp } from '../state.jsx'
 import { STEPS } from '../data/content.js'
 import { RETURNS, STRATEGIES } from '../data/strategies.js'
 import { pct } from '../lib/format.js'
+import FirmMark from '../components/FirmMark.jsx'
 
 const Field = ({ label, value, onChange }) => (
   <label className="field">
@@ -94,7 +95,7 @@ export default function Invest() {
                     type="button"
                     onClick={() => setPick(s.name)}
                     style={{
-                      display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr) 100px 140px', gap: 14, alignItems: 'center',
+                      display: 'grid', gridTemplateColumns: '22px 34px minmax(0, 1fr) 100px 140px', gap: 14, alignItems: 'center',
                       padding: '14px 16px', textAlign: 'left',
                       border: `1px solid ${on ? 'var(--accent)' : 'var(--line)'}`,
                       background: on ? '#f1f6f2' : 'var(--surface)',
@@ -107,6 +108,7 @@ export default function Invest() {
                         background: on ? 'var(--accent)' : 'transparent',
                       }}
                     />
+                    <FirmMark firm={s.firm} size={34} />
                     <span className="stack" style={{ gap: 2, minWidth: 0 }}>
                       <span style={{ fontSize: 16, fontWeight: 700 }}>{s.name}</span>
                       <span className="note" style={{ fontSize: 13.5 }}>{s.firm}</span>

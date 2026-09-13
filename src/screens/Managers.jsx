@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Btn, Eyebrow, KV, RailBlock, Stat, TitleMeta } from '../components/ui.jsx'
 import { CIO_MOVES, FIRMS } from '../data/content.js'
+import FirmMark from '../components/FirmMark.jsx'
 
 const slug = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
@@ -24,7 +25,8 @@ export default function Managers() {
             key={f.name}
             style={{ padding: '20px var(--gutter)', borderBottom: '1px solid var(--line)', display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'flex-start' }}
           >
-            <div className="stack" style={{ flex: 1, minWidth: 300, gap: 9 }}>
+            <FirmMark firm={f.name} size={52} />
+            <div className="stack" style={{ flex: 1, minWidth: 280, gap: 9 }}>
               <div className="row" style={{ alignItems: 'baseline', gap: 10 }}>
                 <span className="serif" style={{ fontSize: 21.5, fontWeight: 700 }}>{f.name}</span>
                 <span
