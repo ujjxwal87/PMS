@@ -1,4 +1,4 @@
-# Billionaires Bunker
+# Bunker-o-Billionaire
 
 A PMS (portfolio management services) marketplace for HNI investors, advisors and asset
 managers. This repo is the **frontend prototype**: every screen from the design canvas, built

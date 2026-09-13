@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { ISSUE, USER } from '../data/content.js'
+import BunkerLogo from './BunkerLogo.jsx'
 
 const TABS = [
   ['Discover', '/discover'],
@@ -24,12 +25,15 @@ export default function Masthead() {
     <header className="masthead">
       <div className="masthead__top">
         <div className="wordmark">
-          <span className="wordmark__name">
-            Billionaires<span>·</span>Bunker
-          </span>
-          <span className="wordmark__meta">
-            {ISSUE.dateLine} · {ISSUE.issue} · {ISSUE.tracked}
-          </span>
+          <BunkerLogo size={52} tone="dark" title="Bunker-o-Billionaire" />
+          <div className="wordmark__text">
+            <span className="wordmark__name">
+              Bunker<span>-o-</span>Billionaire
+            </span>
+            <span className="wordmark__meta">
+              {ISSUE.dateLine} · {ISSUE.issue} · {ISSUE.tracked}
+            </span>
+          </div>
         </div>
 
         <div className="masthead__right">

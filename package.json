@@ -1,9 +1,9 @@
 {
-  "name": "billionaires-bunker",
+  "name": "bunker-o-billionaire",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Billionaires Bunker — a PMS marketplace for HNI investors, advisors and asset managers. Frontend prototype with sample data.",
+  "description": "Bunker-o-Billionaire — a PMS marketplace for HNI investors, advisors and asset managers. Frontend prototype with sample data.",
   "scripts": {
     "dev": "vite",
     "start": "vite --host",

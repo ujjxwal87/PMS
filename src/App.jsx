@@ -47,7 +47,7 @@ export default function App() {
 
         <footer className="foot">
           <span>Past performance is not indicative of future returns. Figures net of fees unless stated.</span>
-          <span>Billionaires Bunker · {ISSUE.asAt} · sample data</span>
+          <span>Bunker-o-Billionaire · {ISSUE.asAt} · sample data</span>
         </footer>
       </div>
     </div>

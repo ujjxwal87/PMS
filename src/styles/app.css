@@ -39,7 +39,8 @@ input { font: inherit; color: inherit; }
   display: flex; align-items: flex-end; justify-content: space-between;
   gap: 24px; flex-wrap: wrap; padding-bottom: 12px;
 }
-.wordmark { display: flex; flex-direction: column; gap: 3px; }
+.wordmark { display: flex; align-items: center; gap: 13px; }
+.wordmark__text { display: flex; flex-direction: column; gap: 3px; }
 .wordmark__name { font-family: var(--display); font-size: 29px; font-weight: 700; letter-spacing: -0.015em; }
 .wordmark__name span { color: var(--gold); }
 .wordmark__meta { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--on-dark-4); }
