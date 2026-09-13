@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Btn, Eyebrow, KV, RailBlock, Segmented, SectionHead, TitleMeta } from '../components/ui.jsx'
 import UniverseChart from '../components/UniverseChart.jsx'
 import FirmMark from '../components/FirmMark.jsx'
@@ -6,6 +6,7 @@ import { useApp } from '../state.jsx'
 import { DISCOVER_NOTES, PERIODS, PERIOD_LABEL, RETURNS, SCREEN_CHIPS, STRATEGIES } from '../data/strategies.js'
 import { NEWS } from '../data/content.js'
 import { crores, pct, rank2 } from '../lib/format.js'
+import { slugify } from '../lib/slug.js'
 
 export default function Discover() {
   const navigate = useNavigate()
@@ -70,7 +71,7 @@ export default function Discover() {
               <span className="rank-no num">{rank2(i)}</span>
               <FirmMark firm={r.firm} size={34} />
               <div className="stack" style={{ flex: 1, minWidth: 0, gap: 2 }}>
-                <span style={{ fontSize: 18, fontWeight: 700 }}>{r.name}</span>
+                <Link to={`/strategy/${slugify(r.name)}`} className="row-link" style={{ fontSize: 18 }}>{r.name}</Link>
                 <span className="note">
                   {r.firm} · {DISCOVER_NOTES[i]}
                 </span>

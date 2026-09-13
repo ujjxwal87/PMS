@@ -1,8 +1,9 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Btn, Eyebrow, Meter, RailBlock, SectionHead, Stat, TitleMeta } from '../components/ui.jsx'
 import { HOLDINGS, STATEMENTS } from '../data/content.js'
 import FirmMark from '../components/FirmMark.jsx'
 import { lakhs } from '../lib/format.js'
+import { slugify } from '../lib/slug.js'
 
 export default function Portfolio() {
   const navigate = useNavigate()
@@ -38,7 +39,7 @@ export default function Portfolio() {
               <div key={h.name} className="list-row" style={{ borderTop: '1px solid var(--line)', padding: '16px 0', gap: 22, flexWrap: 'wrap' }}>
                 <FirmMark firm={h.firm} size={40} />
                 <div className="stack" style={{ flex: 1, minWidth: 220, gap: 6 }}>
-                  <span style={{ fontSize: 17.5, fontWeight: 700 }}>{h.name}</span>
+                  <Link to={`/strategy/${slugify(h.name)}`} className="row-link">{h.name}</Link>
                   <span className="note">{h.firm} · funded {h.since}</span>
                   <Meter value={weight} style={{ maxWidth: 260 }} />
                 </div>

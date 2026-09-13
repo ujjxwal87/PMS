@@ -8,6 +8,7 @@ import Leaderboard from './screens/Leaderboard.jsx'
 import Compare from './screens/Compare.jsx'
 import Managers from './screens/Managers.jsx'
 import ManagerProfile from './screens/ManagerProfile.jsx'
+import StrategyDetail from './screens/StrategyDetail.jsx'
 import Research from './screens/Research.jsx'
 import Events from './screens/Events.jsx'
 import Learn from './screens/Learn.jsx'
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/compare" element={<Compare />} />
           <Route path="/managers" element={<Managers />} />
           <Route path="/managers/:slug" element={<ManagerProfile />} />
+          <Route path="/strategy/:slug" element={<StrategyDetail />} />
           <Route path="/research" element={<Research />} />
           <Route path="/events" element={<Events />} />
           <Route path="/learn" element={<Learn />} />

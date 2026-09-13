@@ -1,9 +1,11 @@
+import { Link } from 'react-router-dom'
 import { Btn, Eyebrow, NoteCard } from '../components/ui.jsx'
 import StrategyPicker from '../components/StrategyPicker.jsx'
 import FirmMark from '../components/FirmMark.jsx'
 import { useApp } from '../state.jsx'
 import { STRATEGIES } from '../data/strategies.js'
 import { crores, pct, shortRupees } from '../lib/format.js'
+import { slugify } from '../lib/slug.js'
 
 // [label, accessor, which end wins]
 const ROWS = [
@@ -86,7 +88,9 @@ export default function Compare() {
                 style={{ background: 'var(--ink)', color: 'var(--on-dark)', padding: '16px 18px', gap: 6, borderLeft: '1px solid rgba(244,240,228,0.2)' }}
               >
                 <FirmMark firm={s.firm} size={30} tone="dark" />
-                <span className="serif" style={{ fontSize: 18.5, fontWeight: 700, lineHeight: 1.2 }}>{s.name}</span>
+                <Link to={`/strategy/${slugify(s.name)}`} className="serif row-link row-link--onDark" style={{ fontSize: 18.5, lineHeight: 1.2 }}>
+                  {s.name}
+                </Link>
                 <span style={{ fontSize: 13.5, color: 'var(--on-dark-4)' }}>{s.firm}</span>
               </div>
             ))}

@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Btn, Eyebrow, Meter, RailBlock, Segmented } from '../components/ui.jsx'
 import StrategyPicker from '../components/StrategyPicker.jsx'
 import MetricGuide from '../components/MetricGuide.jsx'
@@ -8,6 +8,7 @@ import { LENSES, MIN_BANDS, PERIODS, PERIOD_LABEL, STRATEGIES, bandFor, inBand }
 import { lensMovers, scoreUniverse } from '../lib/scoring.js'
 import { CUSTOM_LENS, describeWeights } from '../lib/weights.js'
 import { pct, rank2, shortRupees } from '../lib/format.js'
+import { slugify } from '../lib/slug.js'
 
 const GRID = '44px minmax(208px, 1.9fr) 136px 84px 72px 82px 100px 86px 88px'
 
@@ -149,7 +150,7 @@ export default function Leaderboard() {
                 <div className="row" style={{ padding: '12px 10px', gap: 10, minWidth: 0 }}>
                   <FirmMark firm={r.firm} size={30} />
                   <div className="stack" style={{ gap: 2, minWidth: 0 }}>
-                    <span className="truncate" style={{ fontWeight: 700 }}>{r.name}</span>
+                    <Link to={`/strategy/${slugify(r.name)}`} className="row-link truncate">{r.name}</Link>
                     <span style={{ fontSize: 13.5, color: 'var(--muted)' }}>{r.firm}</span>
                   </div>
                 </div>
