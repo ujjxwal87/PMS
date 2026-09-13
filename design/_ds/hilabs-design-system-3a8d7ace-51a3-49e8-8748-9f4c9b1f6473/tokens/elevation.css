@@ -1,0 +1,13 @@
+:root{
+  /* The source decks are almost entirely flat: shapes are separated by fill
+     and hairline rules, not shadow. These are the only elevations sanctioned. */
+  --shadow-none:none;
+  --shadow-card:0 1px 2px rgba(0,40,89,0.08);
+  --shadow-raised:0 2px 6px rgba(0,40,89,0.12);
+  --shadow-overlay:0 8px 24px rgba(0,40,89,0.18);
+
+  /* Protection scrim used over the network hero photograph so white type
+     stays legible; taken from the title-slide overlay rectangles. */
+  --scrim-hero:linear-gradient(90deg,rgba(0,27,61,0.92) 0%,rgba(0,27,61,0.72) 45%,rgba(0,27,61,0.25) 100%); /* @kind other */
+  --scrim-bottom:linear-gradient(180deg,rgba(0,27,61,0) 0%,rgba(0,27,61,0.75) 100%); /* @kind other */
+}

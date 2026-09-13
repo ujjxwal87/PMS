@@ -1,0 +1,83 @@
+:root{
+  /* ---- Brand core (PowerPoint theme "HiLabs Theme") ---- */
+  --hl-blue:#2A69F1;            /* accent1 - the HiLabs blue */
+  --hl-navy:#002B7E;            /* accent2 */
+  --hl-ink:#002859;             /* accent3 / dk2 - deep navy, titles on dark */
+  --hl-grey:#9B9B9B;            /* accent4 */
+  --hl-sky:#95CCEF;             /* accent5 */
+  --hl-azure:#70ADEA;           /* accent6 */
+  --hl-black:#000000;           /* dk1 - body copy */
+  --hl-white:#FFFFFF;           /* lt1 */
+  --hl-paper:#E7E6E6;           /* lt2 */
+  --hl-link:#0563C1;            /* hlink */
+  --hl-link-visited:#ABC4CC;    /* folHlink */
+
+  /* ---- Blue ramp (derived from --hl-blue, used for fills & tints) ---- */
+  --blue-50:#F2F6FF;
+  --blue-100:#D4E1FC;           /* observed table tint */
+  --blue-200:#AFC8F9;
+  --blue-300:#70ADEA;
+  --blue-400:#4A85F4;
+  --blue-500:#2A69F1;
+  --blue-600:#1B51C9;
+  --blue-700:#002B7E;
+  --blue-800:#002859;
+  --blue-900:#001B3D;
+
+  /* ---- Neutrals (observed in deck body copy, rules and table chrome) ---- */
+  --grey-0:#FFFFFF;
+  --grey-50:#F7F7F8;
+  --grey-100:#E7E6E6;
+  --grey-200:#D0CECE;
+  --grey-300:#BFBFBF;           /* the deck's default rule / divider grey */
+  --grey-400:#9B9B9B;
+  --grey-500:#7F7F7F;
+  --grey-600:#636466;
+  --grey-700:#404040;
+  --grey-900:#000000;
+
+  /* ---- Status (RAG) - taken verbatim from deck conditional formatting ---- */
+  --status-good:#00B050;
+  --status-good-surface:#D6FEE9;
+  --status-warn:#FFC000;
+  --status-warn-surface:#FDEDDD;
+  --status-bad:#C00000;
+  --status-bad-surface:#FFC7CE;
+  --status-info:#2A69F1;
+  --status-info-surface:#D4E1FC;
+  --status-neutral:#9B9B9B;
+  --status-neutral-surface:#E7E6E6;
+
+  /* ---- Chart series (order used across QBR charts) ---- */
+  --chart-1:#2A69F1;
+  --chart-2:#002B7E;
+  --chart-3:#70ADEA;
+  --chart-4:#95CCEF;
+  --chart-5:#00B050;
+  --chart-6:#FFC000;
+  --chart-7:#9B9B9B;
+  --chart-8:#156082;
+
+  /* ---- Semantic aliases ---- */
+  --text-primary:var(--hl-black);
+  --text-secondary:var(--grey-600);
+  --text-muted:var(--grey-400);
+  --text-inverse:var(--hl-white);
+  --text-accent:var(--hl-blue);
+  --text-heading:var(--hl-black);
+  --text-heading-inverse:var(--hl-white);
+  --text-link:var(--hl-link);
+
+  --surface-page:var(--hl-white);
+  --surface-card:var(--hl-white);
+  --surface-subtle:var(--grey-50);
+  --surface-band:var(--grey-100);
+  --surface-accent:var(--hl-blue);
+  --surface-dark:var(--hl-ink);
+  --surface-dark-deep:var(--blue-900);
+
+  --border-default:var(--grey-300);
+  --border-strong:var(--grey-600);
+  --border-accent:var(--hl-blue);
+  --border-subtle:var(--grey-100);
+}

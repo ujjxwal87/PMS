@@ -1,0 +1,16 @@
+:root{
+  /* The source material is static (PowerPoint, no custom transitions).
+     These are conservative defaults for on-screen artifacts built from the
+     brand: short, linear-ish, no bounce. */
+  --duration-fast:120ms; /* @kind other */
+  --duration-base:180ms; /* @kind other */
+  --duration-slow:280ms; /* @kind other */
+  --ease-standard:cubic-bezier(0.2,0,0.2,1); /* @kind other */
+  --ease-out:cubic-bezier(0,0,0.2,1); /* @kind other */
+  --ease-in:cubic-bezier(0.4,0,1,1); /* @kind other */
+
+  /* Interaction deltas */
+  --hover-tint:rgba(42,105,241,0.08);
+  --press-scale:0.98; /* @kind other */
+  --focus-ring:0 0 0 3px rgba(42,105,241,0.35);
+}

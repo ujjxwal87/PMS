@@ -1,0 +1,11 @@
+/* Satoshi — the HiLabs brand typeface (Indian Type Foundry, via Fontshare).
+   No binaries shipped in the source decks; these .woff2 files are the
+   Fontshare web build, vendored into assets/fonts/ so the system works
+   offline. If HiLabs holds a licensed cut, swap the files in place. */
+@font-face{font-family:"Satoshi";src:url("../assets/fonts/Satoshi-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Satoshi";src:url("../assets/fonts/Satoshi-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Satoshi";src:url("../assets/fonts/Satoshi-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"Satoshi";src:url("../assets/fonts/Satoshi-Black.woff2") format("woff2");font-weight:900;font-style:normal;font-display:swap}
+
+/* Arial / Aptos / Calibri appear throughout the source decks as PowerPoint
+   fallbacks, not as brand choices. They are kept only in the fallback stack. */

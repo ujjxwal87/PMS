@@ -1,0 +1,41 @@
+:root{
+  /* Base unit 4px. Named steps used across cards, tables and slide chrome. */
+  --space-0:0px;
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:20px;
+  --space-6:24px;
+  --space-8:32px;
+  --space-10:40px;
+  --space-12:48px;
+  --space-16:64px;
+
+  /* Slide geometry, measured from the deck masters at 1280x720. */
+  --slide-w:1280px;
+  --slide-h:720px;
+  --slide-margin-x:36px;      /* 345933 EMU */
+  --slide-title-y:30px;       /* 289926 EMU */
+  --slide-title-h:60px;
+  --slide-content-y:120px;
+  --slide-content-h:533px;
+  --slide-footer-y:676px;
+  --slide-tab-y:37px;         /* blue half-capsule tab on content slides */
+  --slide-tab-w:21px;
+  --slide-tab-h:47px;
+
+  /* Radii. The brand geometry is built from half-capsules: shapes are either
+     square or fully pill-rounded on one axis. Mid radii are rare. */
+  --radius-none:0px;
+  --radius-sm:2px;
+  --radius-md:4px;
+  --radius-lg:8px;
+  --radius-pill:999px;
+
+  /* Border widths */
+  --border-hairline:0.75px;   /* deck table rules */
+  --border-thin:1px;
+  --border-thick:3px;
+  --border-rule:4px;          /* accent underline */
+}

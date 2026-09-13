@@ -1,0 +1,51 @@
+:root{
+  /* Families. Satoshi is the brand face; the deck masters set it on every
+     title and body style. Arial is the PowerPoint-safe fallback. */
+  --font-brand:"Satoshi","Satoshi Variable",Arial,Helvetica,sans-serif;
+  --font-display:"Satoshi","Satoshi Variable",Arial,Helvetica,sans-serif;
+  --font-body:"Satoshi","Satoshi Variable",Arial,Helvetica,sans-serif;
+  --font-mono:"Courier New",ui-monospace,monospace;
+
+  /* Weights. Titles use Satoshi Black on hero/section slides, Bold on
+     content slides. Body is Regular; Medium is used for table headers. */
+  --weight-regular:400;
+  --weight-medium:500;
+  --weight-bold:700;
+  --weight-black:900;
+
+  /* Scale. Values are the deck's own point sizes rendered at 1pt = 1.333px
+     on a 1280x720 slide (a 1920 deck doubles these). */
+  --size-hero:53.3px;      /* 40pt - title + section-divider headline */
+  --size-display:42.7px;   /* 32pt - master title style */
+  --size-title:33.3px;     /* 25pt - content slide headline */
+  --size-subtitle:32px;    /* 24pt - hero subtitle */
+  --size-h1:26.7px;        /* 20pt - body level 1 */
+  --size-h2:24px;          /* 18pt - body level 2 */
+  --size-h3:21.3px;        /* 16pt - body level 3 */
+  --size-body:18.7px;      /* 14pt - body level 4, the deck's workhorse */
+  --size-body-sm:16px;     /* 12pt */
+  --size-caption:14.7px;   /* 11pt - dense tables */
+  --size-micro:13.3px;     /* 10pt */
+  --size-footer:12px;      /* 9pt - footer & slide number */
+
+  /* Line heights. Slide masters set 90% on titles and body. */
+  --leading-tight:0.9;
+  --leading-snug:1.15;
+  --leading-normal:1.4;
+  --leading-relaxed:1.55;
+
+  --tracking-tight:-0.01em;
+  --tracking-normal:0;
+  --tracking-wide:0.04em;
+  --tracking-caps:0.08em;   /* eyebrow / all-caps band labels */
+
+  /* Semantic type roles */
+  --text-hero-size:var(--size-hero);
+  --text-hero-weight:var(--weight-black);
+  --text-slide-title-size:var(--size-title);
+  --text-slide-title-weight:var(--weight-bold);
+  --text-body-size:var(--size-body);
+  --text-body-weight:var(--weight-regular);
+  --text-eyebrow-size:var(--size-body-sm);
+  --text-eyebrow-weight:var(--weight-bold);
+}

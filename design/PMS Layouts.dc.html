@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/hilabs-design-system-3a8d7ace-51a3-49e8-8748-9f4c9b1f6473/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/hilabs-design-system-3a8d7ace-51a3-49e8-8748-9f4c9b1f6473/tokens/colors.css">
+<link rel="stylesheet" href="_ds/hilabs-design-system-3a8d7ace-51a3-49e8-8748-9f4c9b1f6473/tokens/typography.css">
+<link rel="stylesheet" href="_ds/hilabs-design-system-3a8d7ace-51a3-49e8-8748-9f4c9b1f6473/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/hilabs-design-system-3a8d7ace-51a3-49e8-8748-9f4c9b1f6473/tokens/elevation.css">
+<link rel="stylesheet" href="_ds/hilabs-design-system-3a8d7ace-51a3-49e8-8748-9f4c9b1f6473/tokens/motion.css">
+<link rel="stylesheet" href="_ds/hilabs-design-system-3a8d7ace-51a3-49e8-8748-9f4c9b1f6473/styles.css">
+<script src="_ds/hilabs-design-system-3a8d7ace-51a3-49e8-8748-9f4c9b1f6473/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700&family=Libre+Franklin:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #F2F3F5; font-family: "Satoshi", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: #0563C1; text-decoration: none; }
+  a:hover { color: #1B51C9; }
+</style>
+</helmet>
+
+<section style="padding: 56px 56px 60px; display: flex; flex-direction: column; gap: 30px; background: #131211">
+  <div style="display: flex; flex-direction: column; gap: 10px; max-width: 900px">
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #C9A227">Turn 4 · Twelve palettes · click one to apply</div>
+    <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 38px; font-weight: 700; letter-spacing: -0.015em; color: #F4EFE3; line-height: 1.05">Every theme on one wall</h1>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; font-family: 'Source Sans 3', Helvetica, sans-serif; font-size: 13px">
+      <a href="#3a" style="color: #F4EFE3; border: 1px solid #3A3730; padding: 7px 13px; border-radius: 999px">Themed board →</a>
+      <a href="#2a" style="color: #A9A296; border: 1px solid #3A3730; padding: 7px 13px; border-radius: 999px">Palette boards 2a–2c</a>
+      <a href="#1a" style="color: #A9A296; border: 1px solid #3A3730; padding: 7px 13px; border-radius: 999px">Layout shells 1a–1d</a>
+    </div>
+    <p style="margin: 0; font-family: 'Source Sans 3', Helvetica, sans-serif; font-size: 16.5px; line-height: 1.5; color: #A9A296; max-width: 76ch; text-wrap: pretty">Each card is the real leaderboard chrome in that palette — masthead, score bars, zebra, footer. Click a card and the full board below re-themes instantly; the ring marks what's applied. Gold &amp; black, Oxford &amp; brass, Espresso &amp; copper, Forest &amp; gold and Plum &amp; champagne are new.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; align-items: start; max-width: 1640px">
+    <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="12">
+      <div style="display: flex; flex-direction: column; gap: 9px; min-width: 0">
+        <div style="{{ g.labelStyle }}"><span>{{ g.name }}</span><span style="{{ g.badgeStyle }}">{{ g.note }}</span></div>
+        <div onClick="{{ g.pick }}" style="{{ g.cardStyle }}">
+          <div style="{{ g.chromeStyle }}">
+            <span style="{{ g.markStyle }}">Bazaar<span style="{{ g.dotStyle }}">·</span>PMS</span>
+            <span style="{{ g.pillStyle }}">Talk to an analyst</span>
+          </div>
+          <div style="{{ g.titleWrapStyle }}">
+            <span style="{{ g.eyebrowStyle }}">Composite ranking</span>
+            <h3 style="{{ g.titleStyle }}">Ranked on four metrics at once</h3>
+          </div>
+          <div style="{{ g.headStyle }}">
+            <div style="padding: 8px 0 8px 8px">#</div>
+            <div style="padding: 8px 10px">Strategy</div>
+            <div style="padding: 8px 10px">Score</div>
+            <div style="padding: 8px 10px 8px 0; text-align: right">CAGR</div>
+          </div>
+          <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="4">
+            <div style="{{ r.rowStyle }}">
+              <div style="{{ r.rankStyle }}">{{ r.rank }}</div>
+              <div style="padding: 8px 10px; display: flex; flex-direction: column; gap: 1px; min-width: 0">
+                <span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ r.name }}</span>
+                <span style="{{ r.firmStyle }}">{{ r.firm }}</span>
+              </div>
+              <div style="padding: 0 10px; display: flex; align-items: center; gap: 7px">
+                <span style="{{ r.trackStyle }}"><span style="{{ r.fillStyle }}"></span></span>
+                <span style="font-weight: 700; font-variant-numeric: tabular-nums">{{ r.score }}</span>
+              </div>
+              <div style="padding: 0 0 0 10px; text-align: right; font-variant-numeric: tabular-nums">{{ r.cagr }}</div>
+            </div>
+          </sc-for>
+          <div style="{{ g.footStyle }}">
+            <span>Balanced lens · 8 of 47</span>
+            <span style="{{ g.swatchWrapStyle }}"><span style="{{ g.sw1 }}"></span><span style="{{ g.sw2 }}"></span><span style="{{ g.sw3 }}"></span></span>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section style="{{ boardBgStyle }}">
+  <div style="display: flex; flex-direction: column; gap: 10px; max-width: 900px">
+    <div style="{{ eyebrowStyle }}">Turn 3 · Themed leaderboard · showing {{ activeThemeName }}</div>
+    <h1 style="{{ headlineStyle }}">One leaderboard, dialled in from the Tweaks panel</h1>
+    <p style="{{ themeSubStyle }}">Palette, accent, type pairing, headline scale, row density, corner language, score bars and the weights strip are all props — change them in Tweaks and this board re-themes. When it looks right, I roll the same values across every tab.</p>
+  </div>
+
+  <div id="3a" data-screen-label="Leaderboard · themed" style="{{ shellStyle }}">
+    <header style="{{ chromeStyle }}">
+      <div style="display: flex; align-items: center; gap: 32px; height: 100%">
+        <span style="{{ markStyle }}">Bazaar<span style="{{ markDotStyle }}">·</span>PMS</span>
+        <nav style="{{ navStyle }}">
+          <span>Discover</span>
+          <span style="{{ navActiveStyle }}">Leaderboard</span>
+          <span>Compare</span>
+          <span>Managers</span>
+          <span>Research</span>
+          <span>Events</span>
+        </nav>
+      </div>
+      <div style="display: flex; align-items: center; gap: 14px">
+        <span style="{{ quietStyle }}">Watchlist (6)</span>
+        <span style="{{ ctaStyle }}">Talk to an analyst</span>
+      </div>
+    </header>
+
+    <div style="{{ titleBlockStyle }}">
+      <div style="display: flex; flex-direction: column; gap: 7px; max-width: 62ch">
+        <span style="{{ eyebrowStyle }}">Composite ranking · 36-month window</span>
+        <h2 style="{{ headlineStyle }}">A strategy earns its place on four metrics at once</h2>
+        <span style="{{ deckStyle }}">Return alone flatters leveraged books. Upside and downside capture show what was paid for it.</span>
+      </div>
+      <div style="{{ lensWrapStyle }}">
+        <span style="{{ lensOnStyle }}">Balanced</span>
+        <span style="{{ lensOffStyle }}">Downside-first</span>
+        <span style="{{ lensOffStyle }}">Growth</span>
+        <span style="{{ lensOffStyle }}">Custom</span>
+      </div>
+    </div>
+
+    <div style="{{ weightsStyle }}">
+      <span style="{{ weightsLabelStyle }}">Weights</span>
+      <sc-for list="{{ weightRows }}" as="w" hint-placeholder-count="4">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="display: flex; justify-content: space-between; font-size: 13px"><span>{{ w.label }}</span><b>{{ w.value }}</b></span>
+          <span style="{{ w.trackStyle }}"><span style="{{ w.fillStyle }}"></span></span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="{{ headStyle }}">
+      <div style="{{ headFirstStyle }}">#</div>
+      <div style="padding: 11px 12px">Strategy · firm</div>
+      <div style="padding: 11px 12px">Composite score</div>
+      <div style="padding: 11px 12px; text-align: right">5-yr CAGR</div>
+      <div style="padding: 11px 12px; text-align: right">Sharpe</div>
+      <div style="padding: 11px 12px; text-align: right">Upside cap</div>
+      <div style="padding: 11px 12px; text-align: right">Downside cap</div>
+      <div style="{{ headLastStyle }}">Max DD</div>
+    </div>
+
+    <sc-for list="{{ themeRows }}" as="r" hint-placeholder-count="8">
+      <div style="{{ r.rowStyle }}">
+        <div style="{{ r.rankStyle }}">{{ r.rank }}</div>
+        <div style="{{ r.nameCellStyle }}">
+          <span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ r.name }}</span>
+          <span style="{{ r.firmStyle }}">{{ r.firm }}</span>
+        </div>
+        <div style="padding: 0 12px; display: flex; align-items: center; gap: 10px">
+          <span style="{{ r.trackStyle }}"><span style="{{ r.fillStyle }}"></span></span>
+          <span style="font-size: 14.5px; font-weight: 700; font-variant-numeric: tabular-nums">{{ r.score }}</span>
+        </div>
+        <div style="{{ r.numStyle }}">{{ r.cagr }}</div>
+        <div style="{{ r.numStyle }}">{{ r.sharpe }}</div>
+        <div style="{{ r.numStyle }}">{{ r.up }}</div>
+        <div style="{{ r.downStyle }}">{{ r.down }}</div>
+        <div style="{{ r.ddStyle }}">{{ r.dd }}</div>
+      </div>
+    </sc-for>
+
+    <div style="{{ footStyle }}">
+      <span>Note: capture ratios against the S&amp;P BSE 500 TRI; excludes strategies with under 36 months of audited history.</span>
+      <span>8 of 47 shown · Balanced lens</span>
+    </div>
+  </div>
+</section>
+
+<section style="padding: 56px 56px 60px; display: flex; flex-direction: column; gap: 30px; background: #1A1A1D">
+  <div style="display: flex; flex-direction: column; gap: 10px; max-width: 900px">
+    <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #C9A227">Turn 2 · Leaderboard as its own tab · three palettes</div>
+    <h1 style="margin: 0; font-size: 36px; font-weight: 900; letter-spacing: -0.01em; color: #F1EDE6; line-height: 1.05">Ranked on four metrics, not one</h1>
+    <p style="margin: 0; font-size: 17px; line-height: 1.5; color: #B8B2A7; text-wrap: pretty; max-width: 76ch">Leaderboard is now a top-level tab with a weighted composite score — 5-yr CAGR, Sharpe, upside capture and downside capture — and preset lenses so a downside-first investor and a growth investor see different orders. Same screen in three richer palettes: <a href="#2a" style="color: #C9A227">2a</a> ivory &amp; forest, <a href="#2b" style="color: #C9A227">2b</a> graphite &amp; oxblood, <a href="#2c" style="color: #C9A227">2c</a> stone &amp; copper.</p>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 56px; align-items: flex-start">
+
+    <!-- ===== 2a IVORY & FOREST ===== -->
+    <div id="2a" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: baseline; gap: 12px">
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; background: #12513C; color: #FFFCF6; padding: 5px 11px; border-radius: 999px">2A</span>
+        <span style="font-size: 16px; font-weight: 700; color: #F1EDE6">Ivory &amp; forest</span>
+        <span style="font-size: 14px; color: #9A968E">Private-bank register: warm paper, deep green, brass numerals.</span>
+      </div>
+      <div data-screen-label="Leaderboard · ivory" style="width: 1280px; background: #FFFCF6; border: 1px solid #D8D0BF; color: #14251F; display: flex; flex-direction: column; overflow: hidden">
+        <header style="display: flex; align-items: center; justify-content: space-between; padding: 0 30px; height: 60px; border-bottom: 1px solid #E3DBCB">
+          <div style="display: flex; align-items: center; gap: 32px; height: 100%">
+            <span style="font-size: 19px; font-weight: 900; letter-spacing: 0.02em; text-transform: uppercase">Bazaar<span style="color: #A3792C">·</span>PMS</span>
+            <nav style="display: flex; gap: 24px; font-size: 14.5px; color: #5E6B63; height: 100%; align-items: center">
+              <span>Discover</span>
+              <span style="font-weight: 700; color: #14251F; box-shadow: inset 0 -3px 0 #12513C; height: 100%; display: flex; align-items: center">Leaderboard</span>
+              <span>Compare</span><span>Managers</span><span>Research</span><span>Events</span>
+            </nav>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px">
+            <span style="font-size: 13.5px; color: #5E6B63">Watchlist (6)</span>
+            <span style="font-size: 13.5px; font-weight: 700; background: #12513C; color: #FFFCF6; padding: 9px 18px">Talk to an analyst</span>
+          </div>
+        </header>
+
+        <div style="padding: 24px 30px 18px; display: flex; align-items: flex-end; justify-content: space-between; gap: 36px">
+          <div style="display: flex; flex-direction: column; gap: 6px; max-width: 62ch">
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #A3792C">Composite ranking · 36-month window</span>
+            <h2 style="margin: 0; font-size: 27px; font-weight: 900; letter-spacing: -0.015em">A strategy earns its place on four metrics at once</h2>
+            <span style="font-size: 14px; line-height: 1.5; color: #5E6B63">Return alone flatters leveraged books. Upside and downside capture show what was paid for it.</span>
+          </div>
+          <div style="display: flex; gap: 0; flex: none; border: 1px solid #C8BFAB">
+            <span style="font-size: 13px; font-weight: 700; background: #14251F; color: #FFFCF6; padding: 9px 16px">Balanced</span>
+            <span style="font-size: 13px; padding: 9px 16px; border-left: 1px solid #C8BFAB; color: #5E6B63">Downside-first</span>
+            <span style="font-size: 13px; padding: 9px 16px; border-left: 1px solid #C8BFAB; color: #5E6B63">Growth</span>
+            <span style="font-size: 13px; padding: 9px 16px; border-left: 1px solid #C8BFAB; color: #5E6B63">Custom</span>
+          </div>
+        </div>
+
+        <div style="margin: 0 30px; padding: 14px 18px; background: #F4EFE2; border: 1px solid #E3DBCB; display: grid; grid-template-columns: auto repeat(4, 1fr); gap: 26px; align-items: center">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #5E6B63">Weights</span>
+          <div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span>5-yr CAGR</span><b>30%</b></span><span style="height: 4px; background: #DFD5C0; display: block"><span style="display: block; height: 100%; width: 30%; background: #12513C"></span></span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span>Sharpe</span><b>25%</b></span><span style="height: 4px; background: #DFD5C0; display: block"><span style="display: block; height: 100%; width: 25%; background: #12513C"></span></span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span>Upside capture</span><b>20%</b></span><span style="height: 4px; background: #DFD5C0; display: block"><span style="display: block; height: 100%; width: 20%; background: #12513C"></span></span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span>Downside capture</span><b>25%</b></span><span style="height: 4px; background: #DFD5C0; display: block"><span style="display: block; height: 100%; width: 25%; background: #A3792C"></span></span></div>
+        </div>
+
+        <div style="margin-top: 20px; display: grid; grid-template-columns: 52px 1.9fr 168px 94px 78px 104px 116px 92px; background: #14251F; color: #EFEBE1; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">
+          <div style="padding: 11px 0 11px 30px">#</div>
+          <div style="padding: 11px 12px">Strategy · firm</div>
+          <div style="padding: 11px 12px">Composite score</div>
+          <div style="padding: 11px 12px; text-align: right">5-yr CAGR</div>
+          <div style="padding: 11px 12px; text-align: right">Sharpe</div>
+          <div style="padding: 11px 12px; text-align: right">Upside cap</div>
+          <div style="padding: 11px 12px; text-align: right">Downside cap</div>
+          <div style="padding: 11px 30px 11px 12px; text-align: right">Max DD</div>
+        </div>
+        <sc-for list="{{ lbIvory }}" as="r" hint-placeholder-count="8">
+          <div style="display: grid; grid-template-columns: 52px 1.9fr 168px 94px 78px 104px 116px 92px; align-items: center; border-bottom: 1px solid #E9E1D1; background: {{ r.zebra }}; font-size: 14.5px">
+            <div style="padding: 0 0 0 30px; font-size: 13px; font-weight: 700; color: #A3792C; font-variant-numeric: tabular-nums">{{ r.rank }}</div>
+            <div style="padding: 12px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ r.name }}</span>
+              <span style="font-size: 12.5px; color: #5E6B63">{{ r.firm }}</span>
+            </div>
+            <div style="padding: 0 12px; display: flex; align-items: center; gap: 10px">
+              <span style="flex: 1; height: 8px; background: #E3DBCB; display: block"><span style="display: block; height: 100%; width: {{ r.pct }}; background: #12513C"></span></span>
+              <span style="font-size: 14px; font-weight: 900; font-variant-numeric: tabular-nums">{{ r.score }}</span>
+            </div>
+            <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums">{{ r.cagr }}</div>
+            <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums">{{ r.sharpe }}</div>
+            <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums">{{ r.up }}</div>
+            <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700">{{ r.down }}</div>
+            <div style="padding: 0 30px 0 12px; text-align: right; font-variant-numeric: tabular-nums; color: #8C3A2C">{{ r.dd }}</div>
+          </div>
+        </sc-for>
+        <div style="padding: 13px 30px; background: #F4EFE2; display: flex; justify-content: space-between; font-size: 12.5px; color: #5E6B63">
+          <span>Note: capture ratios against the S&amp;P BSE 500 TRI; excludes strategies with under 36 months of audited history.</span>
+          <span>8 of 47 shown · Balanced lens</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 2b GRAPHITE & OXBLOOD ===== -->
+    <div id="2b" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: baseline; gap: 12px">
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; background: #8E2F2A; color: #F1EDE6; padding: 5px 11px; border-radius: 999px">2B</span>
+        <span style="font-size: 16px; font-weight: 700; color: #F1EDE6">Graphite &amp; oxblood</span>
+        <span style="font-size: 14px; color: #9A968E">Desk-at-night: graphite ground, oxblood and gold for signal.</span>
+      </div>
+      <div data-screen-label="Leaderboard · graphite" style="width: 1280px; background: #202024; border: 1px solid #34343A; color: #F1EDE6; display: flex; flex-direction: column; overflow: hidden">
+        <header style="display: flex; align-items: center; justify-content: space-between; padding: 0 30px; height: 60px; background: #17171A; border-bottom: 1px solid #34343A">
+          <div style="display: flex; align-items: center; gap: 32px; height: 100%">
+            <span style="font-size: 19px; font-weight: 900; letter-spacing: 0.02em; text-transform: uppercase">Bazaar<span style="color: #C9A227">·</span>PMS</span>
+            <nav style="display: flex; gap: 24px; font-size: 14.5px; color: #9A968E; height: 100%; align-items: center">
+              <span>Discover</span>
+              <span style="font-weight: 700; color: #F1EDE6; box-shadow: inset 0 -3px 0 #C9A227; height: 100%; display: flex; align-items: center">Leaderboard</span>
+              <span>Compare</span><span>Managers</span><span>Research</span><span>Events</span>
+            </nav>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px">
+            <span style="font-size: 13.5px; color: #9A968E">Watchlist (6)</span>
+            <span style="font-size: 13.5px; font-weight: 700; background: #8E2F2A; color: #F6F1E9; padding: 9px 18px">Talk to an analyst</span>
+          </div>
+        </header>
+
+        <div style="padding: 24px 30px 18px; display: flex; align-items: flex-end; justify-content: space-between; gap: 36px">
+          <div style="display: flex; flex-direction: column; gap: 6px; max-width: 62ch">
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #C9A227">Composite ranking · 36-month window</span>
+            <h2 style="margin: 0; font-size: 27px; font-weight: 900; letter-spacing: -0.015em">A strategy earns its place on four metrics at once</h2>
+            <span style="font-size: 14px; line-height: 1.5; color: #A9A49B">Return alone flatters leveraged books. Upside and downside capture show what was paid for it.</span>
+          </div>
+          <div style="display: flex; flex: none; border: 1px solid #3E3E45">
+            <span style="font-size: 13px; font-weight: 700; background: #C9A227; color: #17171A; padding: 9px 16px">Balanced</span>
+            <span style="font-size: 13px; padding: 9px 16px; border-left: 1px solid #3E3E45; color: #9A968E">Downside-first</span>
+            <span style="font-size: 13px; padding: 9px 16px; border-left: 1px solid #3E3E45; color: #9A968E">Growth</span>
+            <span style="font-size: 13px; padding: 9px 16px; border-left: 1px solid #3E3E45; color: #9A968E">Custom</span>
+          </div>
+        </div>
+
+        <div style="margin: 0 30px; padding: 14px 18px; background: #26262B; border: 1px solid #34343A; display: grid; grid-template-columns: auto repeat(4, 1fr); gap: 26px; align-items: center">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #9A968E">Weights</span>
+          <div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #A9A49B">5-yr CAGR</span><b>30%</b></span><span style="height: 4px; background: #3A3A41; display: block"><span style="display: block; height: 100%; width: 30%; background: #C9A227"></span></span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #A9A49B">Sharpe</span><b>25%</b></span><span style="height: 4px; background: #3A3A41; display: block"><span style="display: block; height: 100%; width: 25%; background: #C9A227"></span></span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #A9A49B">Upside capture</span><b>20%</b></span><span style="height: 4px; background: #3A3A41; display: block"><span style="display: block; height: 100%; width: 20%; background: #C9A227"></span></span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #A9A49B">Downside capture</span><b>25%</b></span><span style="height: 4px; background: #3A3A41; display: block"><span style="display: block; height: 100%; width: 25%; background: #8E2F2A"></span></span></div>
+        </div>
+
+        <div style="margin-top: 20px; display: grid; grid-template-columns: 52px 1.9fr 168px 94px 78px 104px 116px 92px; background: #17171A; color: #C9A227; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-top: 1px solid #34343A; border-bottom: 1px solid #34343A">
+          <div style="padding: 11px 0 11px 30px">#</div>
+          <div style="padding: 11px 12px">Strategy · firm</div>
+          <div style="padding: 11px 12px">Composite score</div>
+          <div style="padding: 11px 12px; text-align: right">5-yr CAGR</div>
+          <div style="padding: 11px 12px; text-align: right">Sharpe</div>
+          <div style="padding: 11px 12px; text-align: right">Upside cap</div>
+          <div style="padding: 11px 12px; text-align: right">Downside cap</div>
+          <div style="padding: 11px 30px 11px 12px; text-align: right">Max DD</div>
+        </div>
+        <sc-for list="{{ lbDark }}" as="r" hint-placeholder-count="8">
+          <div style="display: grid; grid-template-columns: 52px 1.9fr 168px 94px 78px 104px 116px 92px; align-items: center; border-bottom: 1px solid #2C2C32; background: {{ r.zebra }}; font-size: 14.5px">
+            <div style="padding: 0 0 0 30px; font-size: 13px; font-weight: 700; color: #C9A227; font-variant-numeric: tabular-nums">{{ r.rank }}</div>
+            <div style="padding: 12px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ r.name }}</span>
+              <span style="font-size: 12.5px; color: #9A968E">{{ r.firm }}</span>
+            </div>
+            <div style="padding: 0 12px; display: flex; align-items: center; gap: 10px">
+              <span style="flex: 1; height: 8px; background: #34343A; display: block"><span style="display: block; height: 100%; width: {{ r.pct }}; background: #C9A227"></span></span>
+              <span style="font-size: 14px; font-weight: 900; font-variant-numeric: tabular-nums">{{ r.score }}</span>
+            </div>
+            <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums">{{ r.cagr }}</div>
+            <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums">{{ r.sharpe }}</div>
+            <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums">{{ r.up }}</div>
+            <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700">{{ r.down }}</div>
+            <div style="padding: 0 30px 0 12px; text-align: right; font-variant-numeric: tabular-nums; color: #D98A80">{{ r.dd }}</div>
+          </div>
+        </sc-for>
+        <div style="padding: 13px 30px; background: #17171A; display: flex; justify-content: space-between; font-size: 12.5px; color: #9A968E">
+          <span>Note: capture ratios against the S&amp;P BSE 500 TRI; excludes strategies with under 36 months of audited history.</span>
+          <span>8 of 47 shown · Balanced lens</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 2c STONE & COPPER ===== -->
+    <div id="2c" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: baseline; gap: 12px">
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; background: #B0562A; color: #FFF; padding: 5px 11px; border-radius: 999px">2C</span>
+        <span style="font-size: 16px; font-weight: 700; color: #F1EDE6">Stone &amp; copper</span>
+        <span style="font-size: 14px; color: #9A968E">Daylight institutional: stone ground, slate ink, copper and teal data.</span>
+      </div>
+      <div data-screen-label="Leaderboard · stone" style="width: 1280px; background: #FFFFFF; border: 1px solid #D6CFC5; color: #1F2A30; display: flex; flex-direction: column; overflow: hidden">
+        <header style="display: flex; align-items: center; justify-content: space-between; padding: 0 30px; height: 60px; background: #1F2A30; color: #F3EFE9; border-bottom: 1px solid #1F2A30">
+          <div style="display: flex; align-items: center; gap: 32px; height: 100%">
+            <span style="font-size: 19px; font-weight: 900; letter-spacing: 0.02em; text-transform: uppercase">Bazaar<span style="color: #D9873F">·</span>PMS</span>
+            <nav style="display: flex; gap: 24px; font-size: 14.5px; color: #A9B3B7; height: 100%; align-items: center">
+              <span>Discover</span>
+              <span style="font-weight: 700; color: #FFFFFF; box-shadow: inset 0 -3px 0 #D9873F; height: 100%; display: flex; align-items: center">Leaderboard</span>
+              <span>Compare</span><span>Managers</span><span>Research</span><span>Events</span>
+            </nav>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px">
+            <span style="font-size: 13.5px; color: #A9B3B7">Watchlist (6)</span>
+            <span style="font-size: 13.5px; font-weight: 700; background: #B0562A; color: #FFF; padding: 9px 18px">Talk to an analyst</span>
+          </div>
+        </header>
+
+        <div style="padding: 24px 30px 18px; background: #F7F4EF; border-bottom: 1px solid #E4DDD3; display: flex; align-items: flex-end; justify-content: space-between; gap: 36px">
+          <div style="display: flex; flex-direction: column; gap: 6px; max-width: 62ch">
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #B0562A">Composite ranking · 36-month window</span>
+            <h2 style="margin: 0; font-size: 27px; font-weight: 900; letter-spacing: -0.015em">A strategy earns its place on four metrics at once</h2>
+            <span style="font-size: 14px; line-height: 1.5; color: #5F6B71">Return alone flatters leveraged books. Upside and downside capture show what was paid for it.</span>
+          </div>
+          <div style="display: flex; flex: none; border: 1px solid #CFC6B9; background: #FFF">
+            <span style="font-size: 13px; font-weight: 700; background: #1F5E63; color: #FFF; padding: 9px 16px">Balanced</span>
+            <span style="font-size: 13px; padding: 9px 16px; border-left: 1px solid #CFC6B9; color: #5F6B71">Downside-first</span>
+            <span style="font-size: 13px; padding: 9px 16px; border-left: 1px solid #CFC6B9; color: #5F6B71">Growth</span>
+            <span style="font-size: 13px; padding: 9px 16px; border-left: 1px solid #CFC6B9; color: #5F6B71">Custom</span>
+          </div>
+        </div>
+
+        <div style="padding: 14px 30px; display: grid; grid-template-columns: auto repeat(4, 1fr); gap: 26px; align-items: center; border-bottom: 1px solid #E4DDD3">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #5F6B71">Weights</span>
+          <div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span>5-yr CAGR</span><b>30%</b></span><span style="height: 4px; background: #E4DDD3; display: block"><span style="display: block; height: 100%; width: 30%; background: #1F5E63"></span></span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span>Sharpe</span><b>25%</b></span><span style="height: 4px; background: #E4DDD3; display: block"><span style="display: block; height: 100%; width: 25%; background: #1F5E63"></span></span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span>Upside capture</span><b>20%</b></span><span style="height: 4px; background: #E4DDD3; display: block"><span style="display: block; height: 100%; width: 20%; background: #1F5E63"></span></span></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span>Downside capture</span><b>25%</b></span><span style="height: 4px; background: #E4DDD3; display: block"><span style="display: block; height: 100%; width: 25%; background: #B0562A"></span></span></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 52px 1.9fr 168px 94px 78px 104px 116px 92px; background: #EDE7DE; color: #3B4951; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid #D6CFC5">
+          <div style="padding: 11px 0 11px 30px">#</div>
+          <div style="padding: 11px 12px">Strategy · firm</div>
+          <div style="padding: 11px 12px">Composite score</div>
+          <div style="padding: 11px 12px; text-align: right">5-yr CAGR</div>
+          <div style="padding: 11px 12px; text-align: right">Sharpe</div>
+          <div style="padding: 11px 12px; text-align: right">Upside cap</div>
+          <div style="padding: 11px 12px; text-align: right">Downside cap</div>
+          <div style="padding: 11px 30px 11px 12px; text-align: right">Max DD</div>
+        </div>
+        <sc-for list="{{ lbStone }}" as="r" hint-placeholder-count="8">
+          <div style="display: grid; grid-template-columns: 52px 1.9fr 168px 94px 78px 104px 116px 92px; align-items: center; border-bottom: 1px solid #E8E2D9; background: {{ r.zebra }}; font-size: 14.5px">
+            <div style="padding: 0 0 0 30px; font-size: 13px; font-weight: 700; color: #B0562A; font-variant-numeric: tabular-nums">{{ r.rank }}</div>
+            <div style="padding: 12px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ r.name }}</span>
+              <span style="font-size: 12.5px; color: #5F6B71">{{ r.firm }}</span>
+            </div>
+            <div style="padding: 0 12px; display: flex; align-items: center; gap: 10px">
+              <span style="flex: 1; height: 8px; background: #E4DDD3; display: block"><span style="display: block; height: 100%; width: {{ r.pct }}; background: #1F5E63"></span></span>
+              <span style="font-size: 14px; font-weight: 900; font-variant-numeric: tabular-nums">{{ r.score }}</span>
+            </div>
+            <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums">{{ r.cagr }}</div>
+            <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums">{{ r.sharpe }}</div>
+            <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums">{{ r.up }}</div>
+            <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700">{{ r.down }}</div>
+            <div style="padding: 0 30px 0 12px; text-align: right; font-variant-numeric: tabular-nums; color: #A33F2C">{{ r.dd }}</div>
+          </div>
+        </sc-for>
+        <div style="padding: 13px 30px; background: #F7F4EF; display: flex; justify-content: space-between; font-size: 12.5px; color: #5F6B71">
+          <span>Note: capture ratios against the S&amp;P BSE 500 TRI; excludes strategies with under 36 months of audited history.</span>
+          <span>8 of 47 shown · Balanced lens</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section style="padding: 56px 56px 72px; display: flex; flex-direction: column; gap: 30px">
+  <div style="display: flex; flex-direction: column; gap: 10px; max-width: 900px">
+    <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #636466">Turn 1 · Layout directions</div>
+    <h1 style="margin: 0; font-size: 36px; font-weight: 900; letter-spacing: -0.01em; color: #000; line-height: 1.05">Four shells for the same Discover screen</h1>
+    <p style="margin: 0; font-size: 17px; line-height: 1.5; color: #404040; text-wrap: pretty; max-width: 74ch">Same data, same HiLabs foundations — Satoshi, HiLabs blue, hairline rules, square-or-pill radii, no shadows. What changes is the structure: <a href="#1a">1a</a> a left-rail ledger, <a href="#1b">1b</a> a split master–detail, <a href="#1c">1c</a> an editorial broadsheet, <a href="#1d">1d</a> a metrics console. Pick one and I will rebuild all five tabs on it.</p>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 56px; align-items: flex-start">
+
+    <!-- ============ 1a LEDGER ============ -->
+    <div id="1a" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: baseline; gap: 12px">
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; background: #002859; color: #fff; padding: 5px 11px; border-radius: 999px">1A</span>
+        <span style="font-size: 16px; font-weight: 700; color: #000">Ledger</span>
+        <span style="font-size: 14px; color: #636466">Left rail · one dense table · no cards. Density first, built for scanning 300 rows.</span>
+      </div>
+
+      <div style="width: 1240px; height: 780px; background: #fff; border: 1px solid #BFBFBF; display: flex; overflow: hidden">
+        <aside style="width: 214px; flex: none; background: #002859; color: #fff; display: flex; flex-direction: column; padding: 22px 0">
+          <div style="padding: 0 22px 26px; font-size: 20px; font-weight: 900; letter-spacing: -0.01em">PMS<span style="color: #70ADEA">Bazaar</span></div>
+          <div style="display: flex; flex-direction: column">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 11px 22px; background: #2A69F1; font-size: 15px; font-weight: 700">
+              <span style="width: 4px; height: 18px; background: #fff; border-radius: 0 999px 999px 0; margin-left: -22px"></span>Discover
+            </div>
+            <div style="padding: 11px 22px; font-size: 15px; color: #AFC8F9">Compare</div>
+            <div style="padding: 11px 22px; font-size: 15px; color: #AFC8F9">Managers</div>
+            <div style="padding: 11px 22px; font-size: 15px; color: #AFC8F9">Research</div>
+            <div style="padding: 11px 22px; font-size: 15px; color: #AFC8F9">Events</div>
+          </div>
+          <div style="margin-top: 30px; padding: 16px 22px 0; border-top: 1px solid rgba(255,255,255,0.18); display: flex; flex-direction: column; gap: 14px">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #70ADEA">Saved screens</div>
+            <div style="font-size: 14px; color: #E7E6E6">Mid-cap, low drawdown</div>
+            <div style="font-size: 14px; color: #E7E6E6">₹50L minimum or less</div>
+            <div style="font-size: 14px; color: #E7E6E6">5-yr CAGR &gt; 20%</div>
+          </div>
+          <div style="margin-top: auto; padding: 0 22px; font-size: 12px; color: #70ADEA">Investor view · Priya S.</div>
+        </aside>
+
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+          <header style="display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 26px; border-bottom: 1px solid #D0CECE">
+            <div style="flex: 1; max-width: 420px; border: 1px solid #BFBFBF; border-radius: 999px; padding: 9px 16px; font-size: 14px; color: #7F7F7F">Search strategy, firm or manager</div>
+            <div style="display: flex; align-items: center; gap: 10px">
+              <span style="font-size: 14px; color: #404040">Watchlist (6)</span>
+              <span style="font-size: 14px; font-weight: 700; background: #2A69F1; color: #fff; padding: 9px 18px; border-radius: 999px">Talk to an analyst</span>
+            </div>
+          </header>
+
+          <div style="padding: 20px 26px 14px; display: flex; align-items: flex-end; justify-content: space-between; gap: 28px">
+            <div style="display: flex; flex-direction: column; gap: 5px">
+              <h2 style="margin: 0; font-size: 25px; font-weight: 700; letter-spacing: -0.01em; color: #000">312 strategies open to new money</h2>
+              <span style="font-size: 14px; color: #636466">Returns net of fees, as at 31 Aug 2026. ~11% of the universe is closed and excluded.</span>
+            </div>
+            <div style="display: flex; gap: 8px; flex: none">
+              <span style="font-size: 13px; border: 1px solid #BFBFBF; border-radius: 999px; padding: 8px 15px">Equity</span>
+              <span style="font-size: 13px; border: 1px solid #BFBFBF; border-radius: 999px; padding: 8px 15px">Multi-cap</span>
+              <span style="font-size: 13px; font-weight: 700; background: #D4E1FC; border: 1px solid #2A69F1; color: #1B51C9; border-radius: 999px; padding: 8px 15px">3 filters</span>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 30px 2.1fr 96px 92px 84px 84px 110px 96px; background: #002B7E; color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+            <div style="padding: 10px 0 10px 26px">#</div>
+            <div style="padding: 10px 12px">Strategy · firm</div>
+            <div style="padding: 10px 12px; text-align: right">AUM ₹cr</div>
+            <div style="padding: 10px 12px; text-align: right">5-yr CAGR</div>
+            <div style="padding: 10px 12px; text-align: right">Sharpe</div>
+            <div style="padding: 10px 12px; text-align: right">Max DD</div>
+            <div style="padding: 10px 12px; text-align: right">Minimum</div>
+            <div style="padding: 10px 26px 10px 12px; text-align: right">36-mo</div>
+          </div>
+
+          <div style="flex: 1; overflow: hidden">
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="9">
+              <div style="display: grid; grid-template-columns: 30px 2.1fr 96px 92px 84px 84px 110px 96px; align-items: center; border-bottom: 0.75px solid #BFBFBF; background: {{ r.zebra }}; font-size: 14.5px; color: #000">
+                <div style="padding: 0 0 0 26px; font-size: 12px; color: #7F7F7F">{{ r.rank }}</div>
+                <div style="padding: 11px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+                  <span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ r.name }}</span>
+                  <span style="font-size: 12.5px; color: #636466">{{ r.firm }}</span>
+                </div>
+                <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums">{{ r.aum }}</div>
+                <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700">{{ r.cagr }}</div>
+                <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums">{{ r.sharpe }}</div>
+                <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums; color: #C00000">{{ r.dd }}</div>
+                <div style="padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums">{{ r.min }}</div>
+                <div style="padding: 0 26px 0 12px; display: flex; justify-content: flex-end">{{ r.spark }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="padding: 12px 26px; border-top: 1px solid #D0CECE; background: #F7F7F8; display: flex; justify-content: space-between; font-size: 13px; color: #636466">
+            <span>Note: figures at strategy level; excludes funds with under 36 months of audited history.</span>
+            <span>Showing 1–9 of 312</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 1b SPLIT ============ -->
+    <div id="1b" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: baseline; gap: 12px">
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; background: #002859; color: #fff; padding: 5px 11px; border-radius: 999px">1B</span>
+        <span style="font-size: 16px; font-weight: 700; color: #000">Split</span>
+        <span style="font-size: 14px; color: #636466">Result list left, pinned detail right. Never lose your place while you dig in.</span>
+      </div>
+
+      <div style="width: 1240px; height: 780px; background: #fff; border: 1px solid #BFBFBF; display: flex; flex-direction: column; overflow: hidden">
+        <header style="display: flex; align-items: center; justify-content: space-between; padding: 0 26px; border-bottom: 1px solid #D0CECE; height: 58px; flex: none">
+          <div style="display: flex; align-items: center; gap: 32px; height: 100%">
+            <span style="font-size: 19px; font-weight: 900; letter-spacing: -0.01em">PMS<span style="color: #2A69F1">Bazaar</span></span>
+            <nav style="display: flex; gap: 24px; font-size: 15px; color: #404040; height: 100%; align-items: center">
+              <span style="font-weight: 700; color: #000; box-shadow: inset 0 -3px 0 #2A69F1; height: 100%; display: flex; align-items: center">Discover</span>
+              <span>Compare</span><span>Managers</span><span>Research</span><span>Events</span>
+            </nav>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px">
+            <span style="font-size: 14px; color: #404040">Watchlist (6)</span>
+            <span style="font-size: 14px; font-weight: 700; background: #2A69F1; color: #fff; padding: 8px 18px; border-radius: 999px">Talk to an analyst</span>
+          </div>
+        </header>
+
+        <div style="flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 520px">
+          <div style="border-right: 1px solid #D0CECE; display: flex; flex-direction: column; min-width: 0">
+            <div style="padding: 18px 24px 14px; display: flex; flex-direction: column; gap: 12px; border-bottom: 1px solid #E7E6E6">
+              <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+                <h2 style="margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -0.01em">Multi-cap equity · 47 matches</h2>
+                <span style="font-size: 13px; color: #636466">Sorted by 5-yr CAGR ↓</span>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap">
+                <span style="font-size: 12.5px; font-weight: 700; background: #D4E1FC; color: #1B51C9; border-radius: 999px; padding: 6px 13px">AUM ≥ ₹1,000 cr ×</span>
+                <span style="font-size: 12.5px; font-weight: 700; background: #D4E1FC; color: #1B51C9; border-radius: 999px; padding: 6px 13px">Min ≤ ₹50 L ×</span>
+                <span style="font-size: 12.5px; border: 1px solid #BFBFBF; border-radius: 999px; padding: 6px 13px; color: #404040">+ Add filter</span>
+              </div>
+            </div>
+            <div style="flex: 1; overflow: hidden">
+              <sc-for list="{{ listRows }}" as="r" hint-placeholder-count="6">
+                <div style="padding: 16px 24px; border-bottom: 1px solid #E7E6E6; display: flex; gap: 18px; align-items: center; background: {{ r.sel }}">
+                  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px">
+                    <div style="display: flex; align-items: center; gap: 9px">
+                      <span style="font-size: 16.5px; font-weight: 700">{{ r.name }}</span>
+                      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; background: {{ r.tagBg }}; color: {{ r.tagFg }}; padding: 3px 9px; border-radius: 999px">{{ r.tag }}</span>
+                    </div>
+                    <span style="font-size: 13px; color: #636466">{{ r.firm }}</span>
+                    <div style="display: flex; gap: 20px; font-size: 13px; color: #404040; font-variant-numeric: tabular-nums">
+                      <span>CAGR <b style="font-weight: 700">{{ r.cagr }}</b></span>
+                      <span>Sharpe <b style="font-weight: 700">{{ r.sharpe }}</b></span>
+                      <span>AUM <b style="font-weight: 700">{{ r.aum }}</b></span>
+                    </div>
+                  </div>
+                  <div style="flex: none">{{ r.spark }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; min-width: 0; background: #F7F7F8">
+            <div style="padding: 22px 26px 18px; background: #002859; color: #fff; display: flex; flex-direction: column; gap: 10px">
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #95CCEF">Selected · SEBI PMS since 2014</span>
+              <h3 style="margin: 0; font-size: 26px; font-weight: 900; letter-spacing: -0.01em; line-height: 1.05">Northwick Emerging Leaders</h3>
+              <span style="font-size: 14px; color: #AFC8F9">Northwick Capital, Mumbai · Anaya Rao, CIO, 11 yr tenure</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #D0CECE; background: #fff">
+              <div style="padding: 16px 18px; border-right: 1px solid #E7E6E6; display: flex; flex-direction: column; gap: 4px">
+                <span style="height: 3px; width: 26px; background: #2A69F1"></span>
+                <span style="font-size: 24px; font-weight: 900; font-variant-numeric: tabular-nums">24.6%</span>
+                <span style="font-size: 12px; color: #636466">5-yr CAGR, net</span>
+              </div>
+              <div style="padding: 16px 18px; border-right: 1px solid #E7E6E6; display: flex; flex-direction: column; gap: 4px">
+                <span style="height: 3px; width: 26px; background: #2A69F1"></span>
+                <span style="font-size: 24px; font-weight: 900; font-variant-numeric: tabular-nums">1.38</span>
+                <span style="font-size: 12px; color: #636466">Sharpe, 36-mo</span>
+              </div>
+              <div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 4px">
+                <span style="height: 3px; width: 26px; background: #C00000"></span>
+                <span style="font-size: 24px; font-weight: 900; font-variant-numeric: tabular-nums">−18.4%</span>
+                <span style="font-size: 12px; color: #636466">Max drawdown</span>
+              </div>
+            </div>
+            <div style="padding: 20px 26px; display: flex; flex-direction: column; gap: 18px; flex: 1; min-height: 0">
+              <div style="display: flex; flex-direction: column; gap: 9px">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #636466">Return vs benchmark</span>
+                <div style="background: #fff; border: 1px solid #E7E6E6; padding: 14px">{{ detailChart }}</div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #636466">Why it screens</span>
+                <p style="margin: 0; font-size: 14.5px; line-height: 1.5; color: #000; text-wrap: pretty">Beats its benchmark in 14 of the last 20 quarters, and the two worst quarters were shallower than peers by ~4 points. Concentration is deliberate: 18 holdings, top five at 41%.</p>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 7px; font-size: 14px; color: #404040">
+                <div style="display: flex; justify-content: space-between; border-bottom: 0.75px solid #BFBFBF; padding-bottom: 6px"><span>Minimum investment</span><b>₹50,00,000</b></div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 0.75px solid #BFBFBF; padding-bottom: 6px"><span>Fee</span><b>1.5% + 10% over 10%</b></div>
+                <div style="display: flex; justify-content: space-between"><span>Exit load</span><b>1% before 12 months</b></div>
+              </div>
+              <div style="margin-top: auto; display: flex; gap: 10px">
+                <span style="flex: 1; text-align: center; font-size: 14.5px; font-weight: 700; background: #2A69F1; color: #fff; padding: 12px; border-radius: 999px">Request the deck</span>
+                <span style="text-align: center; font-size: 14.5px; font-weight: 700; border: 1px solid #002859; color: #002859; padding: 12px 20px; border-radius: 999px">Add to compare</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 1c BROADSHEET ============ -->
+    <div id="1c" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: baseline; gap: 12px">
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; background: #002859; color: #fff; padding: 5px 11px; border-radius: 999px">1C</span>
+        <span style="font-size: 16px; font-weight: 700; color: #000">Broadsheet</span>
+        <span style="font-size: 14px; color: #636466">Editorial masthead, a point of view up top, ranked rows below. Reads like research, not a database.</span>
+      </div>
+
+      <div style="width: 1240px; height: 780px; background: #fff; border: 1px solid #BFBFBF; display: flex; flex-direction: column; overflow: hidden">
+        <header style="background: #002859; color: #fff; padding: 18px 40px 0; flex: none">
+          <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding-bottom: 14px">
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <span style="font-size: 28px; font-weight: 900; letter-spacing: -0.015em">PMS<span style="color: #70ADEA">Bazaar</span></span>
+              <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #95CCEF">Sunday, 13 September 2026 · Issue 214</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 14px">
+              <span style="font-size: 14px; color: #AFC8F9">Watchlist (6)</span>
+              <span style="font-size: 14px; font-weight: 700; background: #2A69F1; color: #fff; padding: 9px 18px; border-radius: 999px">Talk to an analyst</span>
+            </div>
+          </div>
+          <nav style="display: flex; gap: 28px; font-size: 15px; border-top: 1px solid rgba(255,255,255,0.22)">
+            <span style="font-weight: 700; padding: 12px 0; box-shadow: inset 0 -3px 0 #2A69F1">Discover</span>
+            <span style="padding: 12px 0; color: #AFC8F9">Compare</span>
+            <span style="padding: 12px 0; color: #AFC8F9">Managers</span>
+            <span style="padding: 12px 0; color: #AFC8F9">Research</span>
+            <span style="padding: 12px 0; color: #AFC8F9">Events</span>
+          </nav>
+        </header>
+
+        <div style="flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 330px">
+          <div style="display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; border-right: 1px solid #D0CECE">
+            <div style="padding: 22px 40px 18px; border-bottom: 1px solid #BFBFBF; display: flex; gap: 34px; align-items: flex-start; flex: none">
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #2A69F1">This month's read</span>
+                <h2 style="margin: 0; font-size: 30px; font-weight: 900; line-height: 1.02; letter-spacing: -0.02em; color: #000; text-wrap: balance">Mid-cap books carried the quarter — but only where the manager stayed put</h2>
+                <p style="margin: 0; font-size: 15.5px; line-height: 1.5; color: #404040; text-wrap: pretty">Across 312 open strategies, firms whose CIO has held the seat five years or more returned ~4.2 points more than the rest. Tenure, not AUM, is doing the work.</p>
+                <div style="display: flex; gap: 8px">
+                  <span style="font-size: 13px; font-weight: 700; background: #2A69F1; color: #fff; padding: 9px 17px; border-radius: 999px">Read the note</span>
+                  <span style="font-size: 13px; font-weight: 700; border: 1px solid #002859; color: #002859; padding: 9px 17px; border-radius: 999px">Screen on tenure</span>
+                </div>
+              </div>
+              <div style="width: 300px; flex: none; background: #F7F7F8; border: 1px solid #E7E6E6; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #636466">Universe at a glance</span>
+                {{ broadsheetChart }}
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #404040; border-top: 0.75px solid #BFBFBF; padding-top: 8px"><span>Median 5-yr CAGR</span><b>18.9%</b></div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #404040"><span>Open to new money</span><b>312 of 351</b></div>
+              </div>
+            </div>
+
+            <div style="padding: 14px 40px 8px; flex: none; display: flex; align-items: baseline; justify-content: space-between">
+              <h3 style="margin: 0; font-size: 18px; font-weight: 700">The month's ten best-performing books</h3>
+              <span style="font-size: 13px; color: #636466">Net of fees · 5-yr CAGR</span>
+            </div>
+            <div style="flex: 1; min-height: 0; overflow: hidden; padding: 0 40px">
+              <sc-for list="{{ ranked }}" as="r" hint-placeholder-count="4">
+                <div style="display: flex; align-items: center; gap: 20px; padding: 14px 0; border-top: 0.75px solid #BFBFBF">
+                  <span style="font-size: 26px; font-weight: 900; color: #BFBFBF; width: 40px; font-variant-numeric: tabular-nums">{{ r.rank }}</span>
+                  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+                    <div style="display: flex; flex-direction: column; gap: 2px">
+                      <span style="font-size: 16.5px; font-weight: 700">{{ r.name }}</span>
+                      <span style="font-size: 13px; color: #636466">{{ r.firm }} · {{ r.note }}</span>
+                    </div>
+                  </div>
+                  <span style="font-size: 20px; font-weight: 900; font-variant-numeric: tabular-nums; color: #1B51C9">{{ r.cagr }}</span>
+                  <span style="font-size: 13px; color: #636466; width: 92px; text-align: right; font-variant-numeric: tabular-nums">{{ r.aum }} cr</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <aside style="display: flex; flex-direction: column; background: #F7F7F8; min-width: 0; min-height: 0; overflow: hidden">
+            <div style="padding: 18px 22px; border-bottom: 1px solid #D0CECE; display: flex; flex-direction: column; gap: 12px">
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #636466">Screen the universe</span>
+              <div style="border: 1px solid #BFBFBF; background: #fff; border-radius: 999px; padding: 9px 15px; font-size: 14px; color: #7F7F7F">Strategy, firm or manager</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 7px">
+                <span style="font-size: 12.5px; border: 1px solid #BFBFBF; background: #fff; border-radius: 999px; padding: 6px 12px">Multi-cap</span>
+                <span style="font-size: 12.5px; border: 1px solid #BFBFBF; background: #fff; border-radius: 999px; padding: 6px 12px">Mid-cap</span>
+                <span style="font-size: 12.5px; font-weight: 700; background: #2A69F1; color: #fff; border-radius: 999px; padding: 6px 12px">Min ≤ ₹50 L</span>
+                <span style="font-size: 12.5px; border: 1px solid #BFBFBF; background: #fff; border-radius: 999px; padding: 6px 12px">Low drawdown</span>
+              </div>
+            </div>
+            <div style="padding: 16px 22px; display: flex; flex-direction: column; gap: 12px; border-bottom: 1px solid #D0CECE">
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #636466">Newsflow</span>
+              <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14.5px; font-weight: 700; line-height: 1.25">Marlowe PMS reopens flagship after 14 months</span><span style="font-size: 12.5px; color: #636466">11 Sep · 3 min</span></div>
+              <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14.5px; font-weight: 700; line-height: 1.25">SEBI tightens PMS performance disclosure</span><span style="font-size: 12.5px; color: #636466">9 Sep · 5 min</span></div>
+              <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14.5px; font-weight: 700; line-height: 1.25">Two CIO exits in the small-cap bucket</span><span style="font-size: 12.5px; color: #636466">4 Sep · 2 min</span></div>
+            </div>
+            <div style="padding: 16px 22px; display: flex; flex-direction: column; gap: 10px; flex: none">
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #636466">Next live session</span>
+              <div style="background: #002859; color: #fff; padding: 16px; display: flex; flex-direction: column; gap: 8px">
+                <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #95CCEF">Thu 17 Sep · 6:30 pm</span>
+                <span style="font-size: 17px; font-weight: 700; line-height: 1.2">Anaya Rao on holding concentrated books through a drawdown</span>
+                <span style="font-size: 14px; font-weight: 700; background: #2A69F1; padding: 8px 14px; border-radius: 999px; align-self: flex-start">Reserve a seat</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 1d CONSOLE ============ -->
+    <div id="1d" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: baseline; gap: 12px">
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; background: #002859; color: #fff; padding: 5px 11px; border-radius: 999px">1D</span>
+        <span style="font-size: 16px; font-weight: 700; color: #000">Console</span>
+        <span style="font-size: 14px; color: #636466">Market band on top, tiled modules below. The universe as a dashboard you drill out of.</span>
+      </div>
+
+      <div style="width: 1240px; height: 780px; background: #F2F3F5; border: 1px solid #BFBFBF; display: flex; flex-direction: column; overflow: hidden">
+        <header style="display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: #fff; border-bottom: 1px solid #D0CECE; height: 56px; flex: none">
+          <div style="display: flex; align-items: center; gap: 30px; height: 100%">
+            <span style="font-size: 19px; font-weight: 900; letter-spacing: -0.01em">PMS<span style="color: #2A69F1">Bazaar</span></span>
+            <nav style="display: flex; gap: 22px; font-size: 14.5px; color: #404040; height: 100%; align-items: center">
+              <span style="font-weight: 700; color: #000; box-shadow: inset 0 -3px 0 #2A69F1; height: 100%; display: flex; align-items: center">Discover</span>
+              <span>Compare</span><span>Managers</span><span>Research</span><span>Events</span>
+            </nav>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px">
+            <span style="font-size: 13.5px; color: #404040">Watchlist (6)</span>
+            <span style="font-size: 13.5px; font-weight: 700; background: #2A69F1; color: #fff; padding: 8px 17px; border-radius: 999px">Talk to an analyst</span>
+          </div>
+        </header>
+
+        <div style="background: #002859; color: #fff; display: grid; grid-template-columns: repeat(5, 1fr); flex: none">
+          <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+            <div style="padding: 16px 24px; border-right: 1px solid rgba(255,255,255,0.16); display: flex; flex-direction: column; gap: 5px">
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #95CCEF">{{ k.label }}</span>
+              <span style="font-size: 27px; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1">{{ k.value }}</span>
+              <span style="font-size: 12.5px; color: #AFC8F9">{{ k.sub }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="padding: 14px 28px; background: #fff; border-bottom: 1px solid #D0CECE; display: flex; align-items: center; gap: 10px; flex: none">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #636466">Universe</span>
+          <span style="font-size: 13px; font-weight: 700; background: #2A69F1; color: #fff; border-radius: 999px; padding: 7px 14px">Equity · multi-cap</span>
+          <span style="font-size: 13px; border: 1px solid #BFBFBF; border-radius: 999px; padding: 7px 14px">AUM ≥ ₹1,000 cr</span>
+          <span style="font-size: 13px; border: 1px solid #BFBFBF; border-radius: 999px; padding: 7px 14px">Min ≤ ₹50 L</span>
+          <span style="font-size: 13px; border: 1px solid #BFBFBF; border-radius: 999px; padding: 7px 14px">+ Add</span>
+          <span style="margin-left: auto; font-size: 13px; color: #636466">47 strategies · 27 firms</span>
+        </div>
+
+        <div style="flex: 1; min-height: 0; padding: 18px 28px 22px; display: grid; grid-template-columns: 1.45fr 1fr; grid-template-rows: 1fr 1fr; gap: 18px">
+          <div style="background: #fff; border: 1px solid #E7E6E6; display: flex; flex-direction: column; min-height: 0">
+            <div style="padding: 14px 18px; border-bottom: 1px solid #E7E6E6; display: flex; align-items: baseline; justify-content: space-between">
+              <span style="font-size: 15.5px; font-weight: 700">Leaderboard · 5-yr CAGR</span>
+              <span style="font-size: 12.5px; color: #2A69F1; font-weight: 700">See all 47</span>
+            </div>
+            <div style="flex: 1; min-height: 0; padding: 6px 18px 10px; display: flex; flex-direction: column; justify-content: space-around">
+              <sc-for list="{{ meters }}" as="m" hint-placeholder-count="5">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span style="width: 168px; font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ m.name }}</span>
+                  <span style="flex: 1; height: 10px; background: #E7E6E6; border-radius: 999px; overflow: hidden; display: block"><span style="display: block; height: 100%; width: {{ m.pct }}; background: #2A69F1; border-radius: 999px"></span></span>
+                  <span style="width: 52px; text-align: right; font-size: 13.5px; font-weight: 700; font-variant-numeric: tabular-nums">{{ m.cagr }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background: #fff; border: 1px solid #E7E6E6; display: flex; flex-direction: column; min-height: 0">
+            <div style="padding: 14px 18px; border-bottom: 1px solid #E7E6E6; font-size: 15.5px; font-weight: 700">Return vs drawdown</div>
+            <div style="flex: 1; min-height: 0; padding: 12px 18px; display: flex; align-items: center; justify-content: center">{{ scatter }}</div>
+            <div style="padding: 0 18px 12px; font-size: 12.5px; color: #636466">Note: 36-month window; bubble size is AUM.</div>
+          </div>
+
+          <div style="background: #fff; border: 1px solid #E7E6E6; display: flex; flex-direction: column; min-height: 0">
+            <div style="padding: 14px 18px; border-bottom: 1px solid #E7E6E6; font-size: 15.5px; font-weight: 700">Flows this quarter</div>
+            <div style="flex: 1; min-height: 0; overflow: hidden">
+              <sc-for list="{{ flows }}" as="f" hint-placeholder-count="4">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 18px; border-bottom: 0.75px solid #BFBFBF; font-size: 14px">
+                  <span style="font-weight: 700">{{ f.name }}</span>
+                  <span style="display: flex; gap: 14px; align-items: center; font-variant-numeric: tabular-nums">
+                    <span style="color: #636466">{{ f.aum }}</span>
+                    <span style="font-weight: 700; background: {{ f.bg }}; color: {{ f.fg }}; padding: 3px 10px; border-radius: 999px">{{ f.delta }}</span>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background: #002859; color: #fff; display: flex; flex-direction: column; min-height: 0; padding: 16px 18px; gap: 10px">
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #95CCEF">Key takeaways</span>
+            <ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.4; color: #E7E6E6">
+              <li>Tenure &gt; 5 yr adds ~4.2 points of 5-yr CAGR in this screen.</li>
+              <li>Three of the top five books are closed to new money next quarter.</li>
+              <li>Median drawdown improved ~2.6 points against the same screen a year ago.</li>
+            </ul>
+            <span style="margin-top: auto; font-size: 13.5px; font-weight: 700; background: #2A69F1; padding: 9px 16px; border-radius: 999px; align-self: flex-start">Compare top five</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;theme&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;Gold &amp; black&quot;, &quot;Oxford &amp; brass&quot;, &quot;Espresso &amp; copper&quot;, &quot;Forest &amp; gold&quot;, &quot;Plum &amp; champagne&quot;, &quot;Midnight &amp; jade&quot;, &quot;Graphite &amp; oxblood&quot;, &quot;Claret &amp; bone&quot;, &quot;Stone &amp; copper&quot;, &quot;Teal &amp; sand&quot;, &quot;Ivory &amp; forest&quot;, &quot;Bone &amp; ink&quot;], &quot;default&quot;: &quot;Stone &amp; copper&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Colour&quot;},
+  &quot;accentColor&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;options&quot;: [&quot;#C9A227&quot;, &quot;#1F8A6B&quot;, &quot;#7A2331&quot;, &quot;#1F5E63&quot;, &quot;#B0562A&quot;], &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Colour&quot;},
+  &quot;typePairing&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;Institutional serif&quot;, &quot;Editorial serif&quot;, &quot;Technical grotesk&quot;, &quot;Brand Satoshi&quot;], &quot;default&quot;: &quot;Institutional serif&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Type&quot;},
+  &quot;headlineScale&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;min&quot;: 22, &quot;max&quot;: 40, &quot;step&quot;: 1, &quot;unit&quot;: &quot;px&quot;, &quot;default&quot;: 30, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Type&quot;},
+  &quot;density&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;Comfortable&quot;, &quot;Standard&quot;, &quot;Compact&quot;], &quot;default&quot;: &quot;Standard&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Layout&quot;},
+  &quot;corners&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;Square&quot;, &quot;Soft&quot;, &quot;Pill&quot;], &quot;default&quot;: &quot;Soft&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Layout&quot;},
+  &quot;showScoreBars&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Layout&quot;},
+  &quot;showWeights&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Layout&quot;}
+}">
+const E = React.createElement;
+
+function spark(pts, w, h, color) {
+  const max = Math.max(...pts), min = Math.min(...pts);
+  const d = pts.map((p, i) => `${(i / (pts.length - 1)) * w},${h - ((p - min) / (max - min || 1)) * (h - 4) - 2}`).join(' ');
+  return E('svg', { viewBox: `0 0 ${w} ${h}`, style: { width: w, height: h, display: 'block' } },
+    E('polyline', { points: d, fill: 'none', stroke: color, strokeWidth: 2 }));
+}
+
+const DATA = [
+  ['Northwick Emerging Leaders', 'Northwick Capital', '12,410', '24.6%', '1.38', '−18.4%', '₹50 L', [4, 8, 7, 12, 15, 19, 24, 29]],
+  ['Marlowe India Flagship', 'Marlowe Asset Mgmt', '9,860', '23.1%', '1.24', '−21.0%', '₹50 L', [6, 6, 9, 11, 10, 16, 20, 26]],
+  ['Sevenhill Focused 18', 'Sevenhill Advisors', '6,240', '22.4%', '1.31', '−16.2%', '₹1 cr', [3, 7, 10, 9, 14, 17, 21, 24]],
+  ['Karanth Mid-Cap Alpha', 'Karanth Investments', '5,120', '21.8%', '1.09', '−24.6%', '₹50 L', [5, 4, 8, 13, 12, 18, 19, 23]],
+  ['Vireo Quality Compounders', 'Vireo Capital', '4,780', '20.9%', '1.42', '−13.8%', '₹75 L', [7, 9, 11, 14, 16, 18, 21, 22]],
+  ['Bhatia Long Horizon', 'Bhatia & Co', '3,940', '20.2%', '1.17', '−19.9%', '₹25 L', [4, 6, 9, 10, 14, 15, 19, 21]],
+  ['Aldern Small-Cap Select', 'Aldern Partners', '2,610', '19.7%', '0.98', '−28.3%', '₹50 L', [2, 6, 5, 11, 13, 14, 18, 20]],
+  ['Rukmini Dividend Yield', 'Rukmini Capital', '2,280', '18.4%', '1.21', '−15.1%', '₹25 L', [6, 7, 9, 11, 13, 15, 17, 19]],
+  ['Corbett Multi-Cap Core', 'Corbett Fund Mgrs', '1,930', '17.9%', '1.05', '−20.7%', '₹50 L', [5, 5, 8, 9, 12, 13, 16, 18]]
+];
+
+const LB = [
+  ['Vireo Quality Compounders', 'Vireo Capital', '20.9%', '1.42', '104%', '71%', '−13.8%', 91.4],
+  ['Northwick Emerging Leaders', 'Northwick Capital', '24.6%', '1.38', '118%', '84%', '−18.4%', 89.7],
+  ['Sevenhill Focused 18', 'Sevenhill Advisors', '22.4%', '1.31', '109%', '79%', '−16.2%', 86.2],
+  ['Rukmini Dividend Yield', 'Rukmini Capital', '18.4%', '1.21', '92%', '63%', '−15.1%', 82.8],
+  ['Marlowe India Flagship', 'Marlowe Asset Mgmt', '23.1%', '1.24', '124%', '96%', '−21.0%', 80.5],
+  ['Bhatia Long Horizon', 'Bhatia & Co', '20.2%', '1.17', '101%', '86%', '−19.9%', 77.1],
+  ['Karanth Mid-Cap Alpha', 'Karanth Investments', '21.8%', '1.09', '127%', '108%', '−24.6%', 71.6],
+  ['Aldern Small-Cap Select', 'Aldern Partners', '19.7%', '0.98', '131%', '119%', '−28.3%', 66.3]
+];
+
+function lbRows(zebraA, zebraB) {
+  return LB.map((d, i) => ({
+    rank: String(i + 1).padStart(2, '0'), name: d[0], firm: d[1], cagr: d[2], sharpe: d[3],
+    up: d[4], down: d[5], dd: d[6], score: d[7].toFixed(1),
+    pct: Math.round(((d[7] - 55) / 45) * 100) + '%',
+    zebra: i % 2 ? zebraB : zebraA
+  }));
+}
+
+const THEMES = {
+  'Midnight & jade': { page: '#0B171A', surface: '#13252A', alt: '#183036', ink: '#ECF4F1', muted: '#93AAA6', rule: '#22383E', band: '#0B171A', bandInk: '#8FD3B8', accent: '#1F8A6B', accentInk: '#FFFFFF', gold: '#D8B26A', neg: '#E08D7E', chrome: '#0B171A', chromeInk: '#ECF4F1' },
+  'Claret & bone': { page: '#EFE9E2', surface: '#FFFFFF', alt: '#F8F3ED', ink: '#231A1C', muted: '#6B5B5E', rule: '#E6DBD6', band: '#5A1E27', bandInk: '#F7EDE6', accent: '#7A2331', accentInk: '#FFFFFF', gold: '#B08A4A', neg: '#A33F2C', chrome: '#231A1C', chromeInk: '#F7EDE6' },
+  'Ivory & forest': { page: '#EFEBE1', surface: '#FFFCF6', alt: '#F7F2E7', ink: '#14251F', muted: '#5E6B63', rule: '#E3DBCB', band: '#14251F', bandInk: '#EFEBE1', accent: '#12513C', accentInk: '#FFFCF6', gold: '#A3792C', neg: '#8C3A2C', chrome: '#FFFCF6', chromeInk: '#14251F' },
+  'Graphite & oxblood': { page: '#141417', surface: '#202024', alt: '#26262B', ink: '#F1EDE6', muted: '#9A968E', rule: '#34343A', band: '#17171A', bandInk: '#C9A227', accent: '#8E2F2A', accentInk: '#F6F1E9', gold: '#C9A227', neg: '#D98A80', chrome: '#17171A', chromeInk: '#F1EDE6' },
+  'Stone & copper': { page: '#E9E4DC', surface: '#FFFFFF', alt: '#F5F2ED', ink: '#1F2A30', muted: '#5F6B71', rule: '#E4DDD3', band: '#EDE7DE', bandInk: '#3B4951', accent: '#1F5E63', accentInk: '#FFFFFF', gold: '#B0562A', neg: '#A33F2C', chrome: '#1F2A30', chromeInk: '#F3EFE9' },
+  'Gold & black': { page: '#0A0A09', surface: '#121210', alt: '#1A1916', ink: '#F4EFE3', muted: '#9C9484', rule: '#2A2822', band: '#000000', bandInk: '#C9A227', accent: '#C9A227', accentInk: '#12100B', gold: '#E3C56A', neg: '#D98A80', chrome: '#000000', chromeInk: '#F4EFE3' },
+  'Oxford & brass': { page: '#0C1220', surface: '#121A2B', alt: '#182338', ink: '#EDF0F6', muted: '#94A0B8', rule: '#22304A', band: '#0A0F1B', bandInk: '#C8A860', accent: '#C8A860', accentInk: '#0A0F1B', gold: '#E0C78C', neg: '#E08D7E', chrome: '#0A0F1B', chromeInk: '#EDF0F6' },
+  'Espresso & copper': { page: '#17110D', surface: '#1F1711', alt: '#281E17', ink: '#F2E8DC', muted: '#A79280', rule: '#362A20', band: '#120D09', bandInk: '#D9873F', accent: '#B0562A', accentInk: '#FFF6EC', gold: '#D9873F', neg: '#E08D7E', chrome: '#120D09', chromeInk: '#F2E8DC' },
+  'Forest & gold': { page: '#0B1712', surface: '#112019', alt: '#172B22', ink: '#E9F2EC', muted: '#8FA89A', rule: '#20362B', band: '#081109', bandInk: '#D8B26A', accent: '#1F8A5B', accentInk: '#F3FFF8', gold: '#D8B26A', neg: '#E08D7E', chrome: '#081109', chromeInk: '#E9F2EC' },
+  'Plum & champagne': { page: '#17101A', surface: '#1E1622', alt: '#271D2C', ink: '#F3ECF2', muted: '#A695A8', rule: '#33263A', band: '#120B15', bandInk: '#E4CBA0', accent: '#6E2A5E', accentInk: '#FCF3FA', gold: '#E4CBA0', neg: '#E08D7E', chrome: '#120B15', chromeInk: '#F3ECF2' },
+  'Teal & sand': { page: '#E8E3D7', surface: '#FFFDF8', alt: '#F4F0E4', ink: '#12312F', muted: '#5A6E6B', rule: '#E0D8C6', band: '#12312F', bandInk: '#F0E7D2', accent: '#12615A', accentInk: '#FFFDF8', gold: '#B08A4A', neg: '#A33F2C', chrome: '#12312F', chromeInk: '#F4F0E4' },
+  'Bone & ink': { page: '#EDEAE3', surface: '#FFFFFF', alt: '#F6F4EE', ink: '#141414', muted: '#5E5C57', rule: '#E2DED5', band: '#141414', bandInk: '#EDEAE3', accent: '#141414', accentInk: '#FFFFFF', gold: '#9A7B33', neg: '#9E3B2C', chrome: '#141414', chromeInk: '#F6F4EE' }
+};
+
+const PAIRINGS = {
+  'Editorial serif': { display: '"Newsreader", Georgia, serif', body: '"Libre Franklin", Helvetica, sans-serif', dw: 600, tracking: '-0.02em' },
+  'Technical grotesk': { display: '"Space Grotesk", Helvetica, sans-serif', body: '"IBM Plex Sans", Helvetica, sans-serif', dw: 700, tracking: '-0.03em' },
+  'Institutional serif': { display: '"Source Serif 4", Georgia, serif', body: '"Source Sans 3", Helvetica, sans-serif', dw: 700, tracking: '-0.015em' },
+  'Brand Satoshi': { display: '"Satoshi", Arial, sans-serif', body: '"Satoshi", Arial, sans-serif', dw: 900, tracking: '-0.015em' }
+};
+
+class Component extends DCLogic {
+  state = { pick: null };
+
+  gallery() {
+    const active = this.state.pick || this.props.theme || 'Midnight & jade';
+    const f = PAIRINGS[this.props.typePairing] || PAIRINGS['Institutional serif'];
+    return Object.keys(THEMES).map(name => {
+      const t = THEMES[name];
+      const on = name === active;
+      return {
+        name,
+        note: t.page === '#FFFFFF' || parseInt(t.page.slice(1, 3), 16) > 120 ? 'Light ground' : 'Dark ground',
+        pick: () => this.setState({ pick: name }),
+        cardStyle: `width: 100%; background: ${t.surface}; color: ${t.ink}; border: 1px solid ${on ? t.gold : t.rule}; outline: ${on ? '3px solid ' + t.gold : 'none'}; outline-offset: 3px; border-radius: 8px; overflow: hidden; cursor: pointer; font-family: ${f.body}; display: flex; flex-direction: column`,
+        chromeStyle: `display: flex; align-items: center; justify-content: space-between; padding: 0 16px; height: 42px; background: ${t.chrome}; color: ${t.chromeInk}`,
+        markStyle: `font-family: ${f.display}; font-size: 14px; font-weight: ${f.dw}; letter-spacing: ${f.tracking}`,
+        dotStyle: `color: ${t.gold}`,
+        pillStyle: `font-size: 10.5px; font-weight: 700; background: ${t.accent}; color: ${t.accentInk}; padding: 5px 11px; border-radius: 5px`,
+        titleWrapStyle: `padding: 14px 16px 12px; background: ${t.alt}; border-bottom: 1px solid ${t.rule}; display: flex; flex-direction: column; gap: 4px`,
+        eyebrowStyle: `font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${t.gold}`,
+        titleStyle: `margin: 0; font-family: ${f.display}; font-size: 17px; font-weight: ${f.dw}; letter-spacing: ${f.tracking}; line-height: 1.15`,
+        headStyle: `display: grid; grid-template-columns: 26px 1fr 74px 56px; background: ${t.band}; color: ${t.bandInk}; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase`,
+        rows: LB.slice(0, 3).map((d, i) => ({
+          rank: String(i + 1).padStart(2, '0'), name: d[0], firm: d[1], score: d[7].toFixed(1), cagr: d[2],
+          rowStyle: `display: grid; grid-template-columns: 26px 1fr 74px 56px; align-items: center; border-bottom: 1px solid ${t.rule}; background: ${i % 2 ? t.alt : t.surface}; font-size: 11.5px`,
+          rankStyle: `padding: 0 0 0 8px; font-size: 9.5px; font-weight: 700; color: ${t.gold}; font-variant-numeric: tabular-nums`,
+          firmStyle: `font-size: 9.5px; color: ${t.muted}`,
+          trackStyle: `flex: 1; height: 6px; border-radius: 4px; background: ${t.rule}; display: block`,
+          fillStyle: `display: block; height: 100%; border-radius: 4px; width: ${Math.round(((d[7] - 55) / 45) * 100)}%; background: ${t.accent}`
+        })),
+        footStyle: `padding: 9px 16px; background: ${t.alt}; display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: ${t.muted}`,
+        swatchWrapStyle: 'display: flex; gap: 4px',
+        sw1: `width: 14px; height: 14px; border-radius: 3px; background: ${t.accent}; display: block`,
+        sw2: `width: 14px; height: 14px; border-radius: 3px; background: ${t.gold}; display: block`,
+        sw3: `width: 14px; height: 14px; border-radius: 3px; background: ${t.page}; border: 1px solid ${t.rule}; display: block`,
+        labelStyle: `font-size: 14px; font-weight: 700; color: ${on ? '#F4EFE3' : '#C8C2B6'}; display: flex; align-items: center; gap: 8px`,
+        badgeStyle: `font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: ${on ? '#0A0A09' : '#8E887C'}; background: ${on ? t.gold : 'transparent'}; border: 1px solid ${on ? t.gold : '#3A3730'}; padding: 3px 8px; border-radius: 999px`
+      };
+    });
+  }
+
+  themeVals() {
+    const t = THEMES[this.state.pick || this.props.theme] || THEMES['Midnight & jade'];
+    const accent = this.props.accentColor || t.accent;
+    const f = PAIRINGS[this.props.typePairing] || PAIRINGS['Editorial serif'];
+    const dens = this.props.density || 'Standard';
+    const rowPad = dens === 'Compact' ? 8 : dens === 'Comfortable' ? 18 : 13;
+    const pad = dens === 'Compact' ? 22 : dens === 'Comfortable' ? 40 : 32;
+    const corners = this.props.corners || 'Soft';
+    const r = corners === 'Square' ? '0px' : corners === 'Pill' ? '999px' : '6px';
+    const rShell = corners === 'Square' ? '0px' : '10px';
+    const hs = this.props.headlineScale ?? 30;
+    const bars = this.props.showScoreBars !== false;
+    const weights = this.props.showWeights !== false;
+
+    const cap = `font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-family: ${f.body}`;
+    const cols = '54px 1.9fr ' + (bars ? '176px ' : '96px ') + '96px 78px 106px 118px 92px';
+
+    const themeRows = LB.map((d, i) => ({
+      rank: String(i + 1).padStart(2, '0'), name: d[0], firm: d[1], cagr: d[2], sharpe: d[3],
+      up: d[4], down: d[5], dd: d[6], score: d[7].toFixed(1),
+      rowStyle: `display: grid; grid-template-columns: ${cols}; align-items: center; border-bottom: 1px solid ${t.rule}; background: ${i % 2 ? t.alt : t.surface}; font-size: 14.5px`,
+      rankStyle: `padding: 0 0 0 ${pad}px; font-size: 13px; font-weight: 700; color: ${t.gold}; font-variant-numeric: tabular-nums`,
+      nameCellStyle: `padding: ${rowPad}px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0`,
+      firmStyle: `font-size: 12.5px; color: ${t.muted}`,
+      numStyle: 'padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums',
+      downStyle: `padding: 0 12px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; color: ${parseInt(d[5]) > 95 ? t.neg : t.ink}`,
+      ddStyle: `padding: 0 ${pad}px 0 12px; text-align: right; font-variant-numeric: tabular-nums; color: ${t.neg}`,
+      trackStyle: `flex: 1; height: 8px; border-radius: ${r}; background: ${t.rule}; display: ${bars ? 'block' : 'none'}`,
+      fillStyle: `display: block; height: 100%; border-radius: ${r}; width: ${Math.round(((d[7] - 55) / 45) * 100)}%; background: ${accent}`
+    }));
+
+    const weightRows = [['5-yr CAGR', 30], ['Sharpe', 25], ['Upside capture', 20], ['Downside capture', 25]].map(w => ({
+      label: w[0], value: w[1] + '%',
+      trackStyle: `height: 4px; border-radius: ${r}; background: ${t.rule}; display: block`,
+      fillStyle: `display: block; height: 100%; border-radius: ${r}; width: ${w[1] * 2}%; background: ${w[0] === 'Downside capture' ? t.gold : accent}`
+    }));
+
+    return {
+      shellStyle: `width: 1280px; background: ${t.surface}; color: ${t.ink}; border: 1px solid ${t.rule}; border-radius: ${rShell}; overflow: hidden; font-family: ${f.body}; display: flex; flex-direction: column`,
+      chromeStyle: `display: flex; align-items: center; justify-content: space-between; padding: 0 ${pad}px; height: 62px; background: ${t.chrome}; color: ${t.chromeInk}`,
+      markStyle: `font-family: ${f.display}; font-size: 21px; font-weight: ${f.dw}; letter-spacing: ${f.tracking}`,
+      markDotStyle: `color: ${t.gold}`,
+      navStyle: `display: flex; gap: 24px; font-size: 14.5px; height: 100%; align-items: center; color: ${t.chromeInk}99`,
+      navActiveStyle: `font-weight: 700; color: ${t.chromeInk}; box-shadow: inset 0 -3px 0 ${accent}; height: 100%; display: flex; align-items: center`,
+      quietStyle: `font-size: 13.5px; color: ${t.chromeInk}AA`,
+      ctaStyle: `font-size: 13.5px; font-weight: 700; background: ${accent}; color: ${t.accentInk}; padding: 9px 18px; border-radius: ${r}`,
+      titleBlockStyle: `padding: ${pad - 6}px ${pad}px 18px; display: flex; align-items: flex-end; justify-content: space-between; gap: 36px; background: ${t.alt}; border-bottom: 1px solid ${t.rule}`,
+      eyebrowStyle: `${cap}; color: ${t.gold}`,
+      headlineStyle: `margin: 0; font-family: ${f.display}; font-size: ${hs}px; font-weight: ${f.dw}; letter-spacing: ${f.tracking}; line-height: 1.1`,
+      deckStyle: `font-size: 14px; line-height: 1.5; color: ${t.muted}`,
+      lensWrapStyle: `display: flex; flex: none; border: 1px solid ${t.rule}; border-radius: ${r}; overflow: hidden; background: ${t.surface}`,
+      lensOnStyle: `font-size: 13px; font-weight: 700; background: ${accent}; color: ${t.accentInk}; padding: 9px 16px`,
+      lensOffStyle: `font-size: 13px; padding: 9px 16px; border-left: 1px solid ${t.rule}; color: ${t.muted}`,
+      weightsStyle: `padding: 14px ${pad}px; display: ${weights ? 'grid' : 'none'}; grid-template-columns: auto repeat(4, 1fr); gap: 26px; align-items: center; border-bottom: 1px solid ${t.rule}`,
+      weightsLabelStyle: `${cap}; color: ${t.muted}`,
+      weightRows,
+      headStyle: `display: grid; grid-template-columns: ${cols}; background: ${t.band}; color: ${t.bandInk}; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase`,
+      headFirstStyle: `padding: 11px 0 11px ${pad}px`,
+      headLastStyle: `padding: 11px ${pad}px 11px 12px; text-align: right`,
+      footStyle: `padding: 13px ${pad}px; background: ${t.alt}; display: flex; justify-content: space-between; font-size: 12.5px; color: ${t.muted}`,
+      boardBgStyle: `padding: 56px 56px 60px; display: flex; flex-direction: column; gap: 28px; background: ${t.page}; color: ${t.ink}`,
+      themeSubStyle: `font-size: 16px; line-height: 1.5; color: ${t.muted}; max-width: 76ch`,
+      themeRows,
+      gallery: this.gallery(),
+      activeThemeName: this.state.pick || this.props.theme || 'Midnight & jade'
+    };
+  }
+
+  renderVals() {
+    const lbIvory = lbRows('#FFFCF6', '#F7F2E7');
+    const lbDark = lbRows('#202024', '#26262B');
+    const lbStone = lbRows('#FFFFFF', '#F5F2ED');
+
+    const rows = DATA.map((d, i) => ({
+      rank: i + 1, name: d[0], firm: d[1], aum: d[2], cagr: d[3], sharpe: d[4], dd: d[5], min: d[6],
+      zebra: i % 2 ? '#F7F7F8' : '#FFFFFF',
+      spark: spark(d[7], 70, 22, '#2A69F1')
+    }));
+
+    const tags = [
+      ['Open', '#D6FEE9', '#00713A'], ['Open', '#D6FEE9', '#00713A'], ['Closing soon', '#FDEDDD', '#8A5A00'],
+      ['Open', '#D6FEE9', '#00713A'], ['Open', '#D6FEE9', '#00713A'], ['Open', '#D6FEE9', '#00713A']
+    ];
+    const listRows = DATA.slice(0, 6).map((d, i) => ({
+      name: d[0], firm: d[1], cagr: d[3], sharpe: d[4], aum: '₹' + d[2] + ' cr',
+      tag: tags[i][0], tagBg: tags[i][1], tagFg: tags[i][2],
+      sel: i === 0 ? '#F2F6FF' : '#FFFFFF',
+      spark: spark(d[7], 96, 34, i === 0 ? '#2A69F1' : '#9B9B9B')
+    }));
+
+    const notes = ['18 holdings, top five 41%', 'reopened Aug 2026', 'closes to new money in Nov', 'highest turnover in the screen', 'lowest drawdown of the ten'];
+    const ranked = DATA.slice(0, 4).map((d, i) => ({
+      rank: String(i + 1).padStart(2, '0'), name: d[0], firm: d[1], note: notes[i], cagr: d[3], aum: '₹' + d[2]
+    }));
+
+    const kpis = [
+      { label: 'Open strategies', value: '312', sub: 'of 351 tracked' },
+      { label: 'Median 5-yr CAGR', value: '18.9%', sub: '+1.4 pts vs 2025' },
+      { label: 'Median Sharpe', value: '1.12', sub: '36-month window' },
+      { label: 'Net flows, Q3', value: '₹8,420 cr', sub: '~11% of tracked AUM' },
+      { label: 'Firms screened', value: '27', sub: '3 filters active' }
+    ];
+
+    const meters = DATA.slice(0, 5).map(d => ({ name: d[0], cagr: d[3], pct: Math.round((parseFloat(d[3]) / 26) * 100) + '%' }));
+
+    const flows = [
+      { name: 'Northwick Capital', aum: '₹12,410 cr', delta: '+₹1,240 cr', bg: '#D6FEE9', fg: '#00713A' },
+      { name: 'Vireo Capital', aum: '₹4,780 cr', delta: '+₹610 cr', bg: '#D6FEE9', fg: '#00713A' },
+      { name: 'Aldern Partners', aum: '₹2,610 cr', delta: '−₹380 cr', bg: '#FFC7CE', fg: '#8A0000' },
+      { name: 'Corbett Fund Mgrs', aum: '₹1,930 cr', delta: '−₹120 cr', bg: '#FFC7CE', fg: '#8A0000' }
+    ];
+
+    const detailChart = E('svg', { viewBox: '0 0 440 120', style: { width: '100%', height: 120, display: 'block' } }, [
+      E('line', { key: 'g1', x1: 0, y1: 100, x2: 440, y2: 100, stroke: '#BFBFBF', strokeWidth: 0.75 }),
+      E('line', { key: 'g2', x1: 0, y1: 55, x2: 440, y2: 55, stroke: '#E7E6E6', strokeWidth: 0.75 }),
+      E('polyline', { key: 'b', points: '0,96 55,88 110,90 165,78 220,70 275,64 330,50 385,44 440,36', fill: 'none', stroke: '#9B9B9B', strokeWidth: 2, strokeDasharray: '5 4' }),
+      E('polyline', { key: 'a', points: '0,96 55,82 110,84 165,66 220,52 275,44 330,28 385,20 440,8', fill: 'none', stroke: '#2A69F1', strokeWidth: 2.5 })
+    ]);
+
+    const broadsheetChart = E('svg', { viewBox: '0 0 268 92', style: { width: '100%', height: 92, display: 'block' } },
+      [12, 26, 44, 62, 78, 58, 34, 18].map((v, i) =>
+        E('rect', { key: i, x: i * 34 + 4, y: 88 - v, width: 24, height: v, fill: i === 3 || i === 4 ? '#2A69F1' : '#AFC8F9' })));
+
+    const bubbles = [[60, 40, 13], [110, 32, 9], [150, 58, 7], [190, 25, 11], [230, 62, 6], [265, 44, 8], [300, 70, 5], [330, 36, 10]];
+    const scatter = E('svg', { viewBox: '0 0 380 170', style: { width: '100%', height: '100%', display: 'block' } }, [
+      E('line', { key: 'x', x1: 30, y1: 150, x2: 372, y2: 150, stroke: '#BFBFBF', strokeWidth: 0.75 }),
+      E('line', { key: 'y', x1: 30, y1: 10, x2: 30, y2: 150, stroke: '#BFBFBF', strokeWidth: 0.75 }),
+      ...bubbles.map((b, i) => E('circle', { key: i, cx: b[0], cy: b[1] + 20, r: b[2], fill: i === 0 ? '#2A69F1' : 'rgba(112,173,234,0.55)' })),
+      E('text', { key: 't1', x: 36, y: 165, fontSize: 10, fill: '#636466', fontFamily: 'Satoshi' }, 'Max drawdown →'),
+      E('text', { key: 't2', x: 34, y: 18, fontSize: 10, fill: '#636466', fontFamily: 'Satoshi' }, '↑ 5-yr CAGR')
+    ]);
+
+    return Object.assign({ rows, listRows, ranked, kpis, meters, flows, detailChart, broadsheetChart, scatter, lbIvory, lbDark, lbStone }, this.themeVals());
+  }
+}
+
+</script>
+</body>
+</html>
