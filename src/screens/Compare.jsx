@@ -1,4 +1,5 @@
 import { Btn, Eyebrow, NoteCard } from '../components/ui.jsx'
+import StrategyPicker from '../components/StrategyPicker.jsx'
 import { useApp } from '../state.jsx'
 import { STRATEGIES } from '../data/strategies.js'
 import { crores, pct } from '../lib/format.js'
@@ -17,30 +18,62 @@ const ROWS = [
 ]
 
 export default function Compare() {
-  const { basket } = useApp()
+  const { basket, dropFromBasket } = useApp()
   const picked = basket.map((n) => STRATEGIES.find((s) => s.name === n)).filter(Boolean)
   const grid = `220px repeat(${Math.max(picked.length, 1)}, minmax(0, 1fr))`
-
-  if (picked.length === 0) {
-    return (
-      <div className="pad stack" style={{ gap: 10 }}>
-        <Eyebrow tone="gold">Nothing selected</Eyebrow>
-        <h2 style={{ fontSize: 28 }}>Pick strategies on the leaderboard to compare them</h2>
-        <p className="lede">Up to three at a time, ranked over the same window.</p>
-      </div>
-    )
-  }
 
   return (
     <div className="pad stack" style={{ gap: 18, paddingBottom: 30 }}>
       <div className="row wrap" style={{ alignItems: 'flex-end', justifyContent: 'space-between', gap: 24 }}>
         <div className="stack" style={{ gap: 6, maxWidth: '64ch' }}>
-          <Eyebrow tone="gold">{picked.length} strategies · same window</Eyebrow>
-          <h2 style={{ fontSize: 28 }}>Where these books differ is the downside, not the return</h2>
+          <Eyebrow tone="gold">
+            {picked.length ? `${picked.length} strategies · same window` : 'Nothing selected yet'}
+          </Eyebrow>
+          <h2 style={{ fontSize: 28 }}>
+            {picked.length
+              ? 'Where these books differ is the downside, not the return'
+              : 'Search for the books you want side by side'}
+          </h2>
         </div>
-        <Btn variant="ghost" onClick={() => window.print()}>Export as PDF</Btn>
+        <Btn variant="ghost" onClick={() => window.print()} disabled={picked.length === 0}>
+          Export as PDF
+        </Btn>
       </div>
 
+      <div
+        className="row wrap"
+        style={{ gap: 14, alignItems: 'center', background: 'var(--panel)', border: '1px solid var(--line)', padding: '14px 16px' }}
+      >
+        <Eyebrow>Comparing</Eyebrow>
+        <div className="row wrap" style={{ gap: 8, flex: 1, minWidth: 220 }}>
+          {picked.map((s) => (
+            <span key={s.name} className="chip chip--on" style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
+              {s.name}
+              <button type="button" aria-label={`Remove ${s.name}`} onClick={() => dropFromBasket(s.name)}>
+                ×
+              </button>
+            </span>
+          ))}
+          {picked.length === 0 && <span className="note">Add up to three strategies.</span>}
+        </div>
+        <div style={{ width: 300, maxWidth: '100%' }}>
+          <StrategyPicker placeholder="Search a PMS strategy or firm…" />
+        </div>
+      </div>
+
+      {picked.length === 0 && (
+        <div
+          className="stack"
+          style={{ border: '1px dashed var(--line-strong)', padding: '40px 20px', gap: 6, alignItems: 'center', textAlign: 'center' }}
+        >
+          <span className="serif" style={{ fontSize: 20, fontWeight: 700 }}>Nothing to compare yet</span>
+          <span className="note" style={{ maxWidth: '46ch' }}>
+            Search above, or add strategies from the leaderboard rail. Two or three read best side by side.
+          </span>
+        </div>
+      )}
+
+      {picked.length > 0 && (
       <div style={{ border: '1px solid var(--line-strong)', overflowX: 'auto' }}>
         <div style={{ minWidth: 640 }}>
           <div style={{ display: 'grid', gridTemplateColumns: grid }}>
@@ -95,6 +128,7 @@ export default function Compare() {
           })}
         </div>
       </div>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
         <NoteCard label="Key takeaway" panel>

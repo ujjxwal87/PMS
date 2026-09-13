@@ -3,6 +3,9 @@ import { COMPARE_SET } from './data/strategies.js'
 
 const AppContext = createContext(null)
 
+// The compare table is laid out for three columns.
+export const MAX_COMPARE = 3
+
 export function AppProvider({ children }) {
   const [period, setPeriod] = useState('5Y')
   const [lens, setLens] = useState('Balanced')
@@ -19,9 +22,13 @@ export function AppProvider({ children }) {
       toggleChip: (c) =>
         setChips((cur) => (cur.includes(c) ? cur.filter((x) => x !== c) : cur.concat(c))),
       basket,
+      basketFull: basket.length >= MAX_COMPARE,
       dropFromBasket: (name) => setBasket((cur) => cur.filter((b) => b !== name)),
+      // Adds until the comparison is full; the picker hides when there is no room.
       addToBasket: (name) =>
-        setBasket((cur) => (cur.includes(name) ? cur : cur.slice(-2).concat(name))),
+        setBasket((cur) =>
+          cur.includes(name) || cur.length >= MAX_COMPARE ? cur : cur.concat(name),
+        ),
       pick, setPick,
       plan, setPlan,
     }),

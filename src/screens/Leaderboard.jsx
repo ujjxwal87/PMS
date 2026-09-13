@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Btn, Eyebrow, Meter, RailBlock, Segmented } from '../components/ui.jsx'
+import StrategyPicker from '../components/StrategyPicker.jsx'
 import { useApp } from '../state.jsx'
 import { LENSES, PERIODS, PERIOD_LABEL } from '../data/strategies.js'
 import { lensMovers, scoreUniverse } from '../lib/scoring.js'
@@ -129,16 +130,19 @@ export default function Leaderboard() {
 
         <RailBlock label="Selected for comparison" style={{ gap: 10 }}>
           {basket.map((b) => (
-            <div key={b} className="kv kv--lined" style={{ fontSize: 14 }}>
-              <span>{b}</span>
-              <button type="button" aria-label={`Remove ${b}`} style={{ color: 'var(--muted-2)' }} onClick={() => dropFromBasket(b)}>
+            <div key={b} className="basket-row">
+              <span className="truncate">{b}</span>
+              <button type="button" className="basket-row__drop" aria-label={`Remove ${b}`} onClick={() => dropFromBasket(b)}>
                 ×
               </button>
             </div>
           ))}
-          {basket.length === 0 && <span className="note">Nothing selected yet.</span>}
-          <Btn block onClick={() => navigate('/compare')} disabled={basket.length === 0}>
-            Compare these {basket.length}
+          {basket.length === 0 && <span className="note">Nothing selected yet — search below.</span>}
+
+          <StrategyPicker />
+
+          <Btn block onClick={() => navigate('/compare')} disabled={basket.length < 2}>
+            {basket.length < 2 ? 'Pick at least two' : `Compare these ${basket.length}`}
           </Btn>
         </RailBlock>
       </aside>

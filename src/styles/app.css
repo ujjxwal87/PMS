@@ -212,3 +212,45 @@ input { font: inherit; color: inherit; }
   .masthead { padding-top: 14px; }
   .tabs { gap: 16px; font-size: 14px; }
 }
+
+/* ---------- Strategy picker (typeahead) ---------- */
+.picker { position: relative; }
+
+.picker__menu {
+  position: absolute; z-index: 20; top: calc(100% - 1px); left: 0; right: 0;
+  margin: 0; padding: 0; list-style: none;
+  background: var(--surface); border: 1px solid var(--line-strong);
+  box-shadow: 0 8px 20px rgba(18, 49, 47, 0.12);
+  max-height: 264px; overflow-y: auto;
+}
+
+.picker__opt {
+  display: grid; grid-template-columns: minmax(0, 1fr) 16px;
+  width: 100%; text-align: left; padding: 9px 12px; gap: 0 8px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.picker__opt:hover, .picker__opt--on { background: var(--panel); }
+.picker__menu li:last-child .picker__opt { border-bottom: none; }
+
+.picker__name {
+  grid-column: 1; grid-row: 1;
+  font-size: 14px; font-weight: 700; line-height: 1.25; min-width: 0;
+}
+.picker__firm {
+  grid-column: 1; grid-row: 2;
+  font-size: 12.5px; color: var(--muted); min-width: 0;
+}
+.picker__plus {
+  grid-column: 2; grid-row: 1 / span 2; align-self: center;
+  font-size: 17px; font-weight: 700; color: var(--accent); text-align: center;
+}
+
+.picker__empty { padding: 10px 12px; font-size: 13px; color: var(--muted); }
+
+/* Removable entry in the comparison basket */
+.basket-row {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  font-size: 14px; border-bottom: 1px solid var(--line-soft); padding-bottom: 6px;
+}
+.basket-row__drop { color: var(--muted-2); font-size: 16px; line-height: 1; flex: none; }
+.basket-row__drop:hover { color: var(--neg); }
