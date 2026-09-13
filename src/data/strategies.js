@@ -10,14 +10,14 @@ export const PERIOD_LABEL = {
 }
 
 export const STRATEGIES = [
-  { name: 'Vireo Quality Compounders', firm: 'Vireo Capital', cagr: 20.9, sharpe: 1.42, upside: 104, downside: 71, maxDD: -13.8, aum: 4780, holdings: 26 },
-  { name: 'Northwick Emerging Leaders', firm: 'Northwick Capital', cagr: 24.6, sharpe: 1.38, upside: 118, downside: 84, maxDD: -18.4, aum: 12410, holdings: 18 },
-  { name: 'Sevenhill Focused 18', firm: 'Sevenhill Advisors', cagr: 22.4, sharpe: 1.31, upside: 109, downside: 79, maxDD: -16.2, aum: 6240, holdings: 18 },
-  { name: 'Rukmini Dividend Yield', firm: 'Rukmini Capital', cagr: 18.4, sharpe: 1.21, upside: 92, downside: 63, maxDD: -15.1, aum: 2280, holdings: 31 },
-  { name: 'Marlowe India Flagship', firm: 'Marlowe Asset Mgmt', cagr: 23.1, sharpe: 1.24, upside: 124, downside: 96, maxDD: -21.0, aum: 9860, holdings: 22 },
-  { name: 'Bhatia Long Horizon', firm: 'Bhatia & Co', cagr: 20.2, sharpe: 1.17, upside: 101, downside: 86, maxDD: -19.9, aum: 3940, holdings: 24 },
-  { name: 'Karanth Mid-Cap Alpha', firm: 'Karanth Investments', cagr: 21.8, sharpe: 1.09, upside: 127, downside: 108, maxDD: -24.6, aum: 5120, holdings: 29 },
-  { name: 'Aldern Small-Cap Select', firm: 'Aldern Partners', cagr: 19.7, sharpe: 0.98, upside: 131, downside: 119, maxDD: -28.3, aum: 2610, holdings: 33 },
+  { name: 'Vireo Quality Compounders', firm: 'Vireo Capital', cagr: 20.9, sharpe: 1.42, upside: 104, downside: 71, maxDD: -13.8, aum: 4780, holdings: 26, minInvestment: 5000000 },
+  { name: 'Northwick Emerging Leaders', firm: 'Northwick Capital', cagr: 24.6, sharpe: 1.38, upside: 118, downside: 84, maxDD: -18.4, aum: 12410, holdings: 18, minInvestment: 10000000 },
+  { name: 'Sevenhill Focused 18', firm: 'Sevenhill Advisors', cagr: 22.4, sharpe: 1.31, upside: 109, downside: 79, maxDD: -16.2, aum: 6240, holdings: 18, minInvestment: 10000000 },
+  { name: 'Rukmini Dividend Yield', firm: 'Rukmini Capital', cagr: 18.4, sharpe: 1.21, upside: 92, downside: 63, maxDD: -15.1, aum: 2280, holdings: 31, minInvestment: 5000000 },
+  { name: 'Marlowe India Flagship', firm: 'Marlowe Asset Mgmt', cagr: 23.1, sharpe: 1.24, upside: 124, downside: 96, maxDD: -21.0, aum: 9860, holdings: 22, minInvestment: 50000000 },
+  { name: 'Bhatia Long Horizon', firm: 'Bhatia & Co', cagr: 20.2, sharpe: 1.17, upside: 101, downside: 86, maxDD: -19.9, aum: 3940, holdings: 24, minInvestment: 7500000 },
+  { name: 'Karanth Mid-Cap Alpha', firm: 'Karanth Investments', cagr: 21.8, sharpe: 1.09, upside: 127, downside: 108, maxDD: -24.6, aum: 5120, holdings: 29, minInvestment: 5000000 },
+  { name: 'Aldern Small-Cap Select', firm: 'Aldern Partners', cagr: 19.7, sharpe: 0.98, upside: 131, downside: 119, maxDD: -28.3, aum: 2610, holdings: 33, minInvestment: 5000000 },
 ]
 
 // Returns per period, index-aligned with STRATEGIES.
@@ -43,6 +43,14 @@ export const LENSES = {
     blurb: 'Return and upside capture dominate. Use it when the holding period is long enough to sit through a 25% drawdown without selling.',
   },
 }
+
+// SEBI sets a ₹50 lakh floor for any PMS account, so that is the tightest rung.
+export const BUDGETS = [
+  { label: 'Any', value: Infinity },
+  { label: '₹50 L', value: 5000000 },
+  { label: '₹1 cr', value: 10000000 },
+  { label: '₹5 cr', value: 50000000 },
+]
 
 export const SCREEN_CHIPS = ['Multi-cap', 'Mid-cap', 'Min ≤ ₹50 L', 'Low drawdown', 'CIO tenure ≥ 5 yr']
 

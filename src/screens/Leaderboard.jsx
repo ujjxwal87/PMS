@@ -4,18 +4,19 @@ import StrategyPicker from '../components/StrategyPicker.jsx'
 import MetricGuide from '../components/MetricGuide.jsx'
 import FirmMark from '../components/FirmMark.jsx'
 import { useApp } from '../state.jsx'
-import { LENSES, PERIODS, PERIOD_LABEL } from '../data/strategies.js'
+import { BUDGETS, LENSES, PERIODS, PERIOD_LABEL, STRATEGIES } from '../data/strategies.js'
 import { lensMovers, scoreUniverse } from '../lib/scoring.js'
 import { CUSTOM_LENS, describeWeights } from '../lib/weights.js'
-import { pct, rank2 } from '../lib/format.js'
+import { pct, rank2, shortRupees } from '../lib/format.js'
 
-const GRID = '44px minmax(208px, 1.9fr) 136px 84px 72px 82px 100px 86px'
+const GRID = '44px minmax(208px, 1.9fr) 136px 84px 72px 82px 100px 86px 88px'
 
 export default function Leaderboard() {
   const navigate = useNavigate()
   const {
     period, setPeriod, lens, setLens, basket, dropFromBasket,
     customWeights, setCustomWeight, resetCustomWeights,
+    budget, setBudget,
   } = useApp()
 
   const isCustom = lens === CUSTOM_LENS
@@ -23,8 +24,12 @@ export default function Leaderboard() {
   const weights = isCustom ? customWeights : LENSES[lens].weights
   const blurb = isCustom ? describeWeights(customWeights, weightLabels) : LENSES[lens].blurb
 
-  const ranked = scoreUniverse(weights, period)
+  const scored = scoreUniverse(weights, period)
+  // Rank the whole universe, then drop what the reader cannot actually open.
+  const ranked = scored.filter((r) => r.minInvestment <= budget)
   const movers = lensMovers(weights, period)
+  const budgetOn = budget !== Infinity
+  const hidden = scored.length - ranked.length
   const periodShort = period === '1M' ? '1M ret' : period === '1Y' ? '1Y ret' : `${period} CAGR`
 
   return (
@@ -45,6 +50,23 @@ export default function Leaderboard() {
             </div>
             <Segmented lg items={[...Object.keys(LENSES), CUSTOM_LENS]} value={lens} onChange={setLens} />
           </div>
+        </div>
+
+        <div
+          className="row wrap"
+          style={{ padding: '12px var(--gutter)', gap: '10px 18px', alignItems: 'center', borderBottom: '1px solid var(--line)' }}
+        >
+          <Eyebrow>I can invest</Eyebrow>
+          <Segmented
+            items={BUDGETS.map((b) => ({ label: b.label, value: b.value }))}
+            value={budget}
+            onChange={setBudget}
+          />
+          <span className="note" style={{ flex: 1, minWidth: 200 }}>
+            {budgetOn
+              ? `${ranked.length} of ${scored.length} strategies take ${BUDGETS.find((b) => b.value === budget).label} or less${hidden ? ` · ${hidden} hidden` : ''}`
+              : 'SEBI sets a ₹50 lakh floor on any PMS account, so nothing here opens for less.'}
+          </span>
         </div>
 
         <div
@@ -96,7 +118,7 @@ export default function Leaderboard() {
         </div>
 
         <div className="tbl-scroll">
-          <div style={{ minWidth: 812 }}>
+          <div style={{ minWidth: 900 }}>
             <div className="tbl-head" style={{ display: 'grid', gridTemplateColumns: GRID }}>
               <div style={{ paddingLeft: 14 }}>#</div>
               <div style={{ padding: '10px' }}>Strategy · firm</div>
@@ -105,9 +127,16 @@ export default function Leaderboard() {
               <div className="right">Sharpe</div>
               <div className="right">Upside</div>
               <div className="right">Downside</div>
-              <div className="right" style={{ paddingRight: 16 }}>Max DD</div>
+              <div className="right">Max DD</div>
+              <div className="right" style={{ paddingRight: 16 }}>Minimum</div>
             </div>
 
+            {ranked.length === 0 && (
+              <div className="stack" style={{ padding: '32px 16px', gap: 6, alignItems: 'center', textAlign: 'center' }}>
+                <span className="serif" style={{ fontSize: 19, fontWeight: 700 }}>Nothing opens at that size</span>
+                <span className="note">Raise the amount, or read the Learn chapter on minimums.</span>
+              </div>
+            )}
             {ranked.map((r, i) => (
               <div
                 key={r.name}
@@ -134,7 +163,8 @@ export default function Leaderboard() {
                 <div className="right num" style={{ fontWeight: 700, color: r.downside > 95 ? 'var(--neg)' : 'var(--ink)' }}>
                   {r.downside}%
                 </div>
-                <div className="right num" style={{ paddingRight: 16, color: 'var(--neg)' }}>{pct(r.maxDD)}</div>
+                <div className="right num" style={{ color: 'var(--neg)' }}>{pct(r.maxDD)}</div>
+                <div className="right num" style={{ paddingRight: 16 }}>{shortRupees(r.minInvestment)}</div>
               </div>
             ))}
           </div>
@@ -147,7 +177,10 @@ export default function Leaderboard() {
             Note: capture ratios against the S&amp;P BSE 500 TRI; excludes strategies with under 36 months of audited
             history.
           </span>
-          <span>8 of 47 shown · {lens} lens</span>
+          <span>
+            {ranked.length} of {scored.length} shown · {lens} lens
+            {budgetOn && ` · min ≤ ${BUDGETS.find((b) => b.value === budget).label}`}
+          </span>
         </div>
       </div>
 
@@ -175,14 +208,25 @@ export default function Leaderboard() {
         </RailBlock>
 
         <RailBlock label="Selected for comparison" style={{ gap: 10 }}>
-          {basket.map((b) => (
-            <div key={b} className="basket-row">
-              <span className="truncate">{b}</span>
-              <button type="button" className="basket-row__drop" aria-label={`Remove ${b}`} onClick={() => dropFromBasket(b)}>
-                ×
-              </button>
-            </div>
-          ))}
+          {basket.map((b) => {
+            const min = STRATEGIES.find((s) => s.name === b)?.minInvestment
+            const overBudget = min > budget
+            return (
+              <div key={b} className="basket-row">
+                <span className="stack truncate" style={{ gap: 2 }}>
+                  <span className="truncate">{b}</span>
+                  {overBudget && (
+                    <span style={{ fontSize: 12.5, color: 'var(--neg)' }}>
+                      Needs {shortRupees(min)}
+                    </span>
+                  )}
+                </span>
+                <button type="button" className="basket-row__drop" aria-label={`Remove ${b}`} onClick={() => dropFromBasket(b)}>
+                  ×
+                </button>
+              </div>
+            )
+          })}
           {basket.length === 0 && <span className="note">Nothing selected yet — search below.</span>}
 
           <StrategyPicker />

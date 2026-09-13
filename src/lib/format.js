@@ -13,3 +13,7 @@ export const lakhs = (n) => `₹${(n / 100000).toFixed(2)} L`
 export const crores = (n) => `₹${n.toLocaleString('en-IN')} cr`
 
 export const rank2 = (i) => String(i + 1).padStart(2, '0')
+
+// ₹75,00,000 reads better as ₹75 L, and ₹5,00,00,000 as ₹5 cr.
+export const shortRupees = (n) =>
+  n >= 10000000 ? `₹${+(n / 10000000).toFixed(2)} cr` : `₹${+(n / 100000).toFixed(0)} L`

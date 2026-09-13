@@ -3,7 +3,7 @@ import StrategyPicker from '../components/StrategyPicker.jsx'
 import FirmMark from '../components/FirmMark.jsx'
 import { useApp } from '../state.jsx'
 import { STRATEGIES } from '../data/strategies.js'
-import { crores, pct } from '../lib/format.js'
+import { crores, pct, shortRupees } from '../lib/format.js'
 
 // [label, accessor, which end wins]
 const ROWS = [
@@ -13,7 +13,7 @@ const ROWS = [
   ['Downside capture', (s) => `${s.downside}%`, 'min'],
   ['Max drawdown', (s) => pct(s.maxDD), 'max'],
   ['AUM', (s) => crores(s.aum), null],
-  ['Minimum investment', () => '₹50,00,000', null],
+  ['Minimum investment', (s) => shortRupees(s.minInvestment), 'min'],
   ['Fee', () => '1.5% + 10% over 10%', null],
   ['Holdings', (s) => String(s.holdings), null],
 ]

@@ -4,7 +4,7 @@ import { Btn, Eyebrow, RailBlock } from '../components/ui.jsx'
 import { useApp } from '../state.jsx'
 import { STEPS } from '../data/content.js'
 import { RETURNS, STRATEGIES } from '../data/strategies.js'
-import { pct } from '../lib/format.js'
+import { pct, shortRupees } from '../lib/format.js'
 import FirmMark from '../components/FirmMark.jsx'
 
 const Field = ({ label, value, onChange }) => (
@@ -114,7 +114,7 @@ export default function Invest() {
                       <span className="note" style={{ fontSize: 13.5 }}>{s.firm}</span>
                     </span>
                     <span className="num" style={{ fontSize: 16, fontWeight: 700, textAlign: 'right' }}>{pct(rets[i])}</span>
-                    <span className="note" style={{ textAlign: 'right' }}>Min ₹50,00,000</span>
+                    <span className="note" style={{ textAlign: 'right' }}>Min {shortRupees(s.minInvestment)}</span>
                   </button>
                 )
               })}
