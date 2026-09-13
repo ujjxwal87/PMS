@@ -3,8 +3,7 @@ import { norm } from './format.js'
 
 // Composite score: the four weighted metrics, re-based onto a 55-100 band so the
 // bar chart reads as a ranking rather than an absolute quality measure.
-export function scoreUniverse(lensName, period) {
-  const weights = LENSES[lensName].weights
+export function scoreUniverse(weights, period) {
   const rets = RETURNS[period]
   const lo = Math.min(...rets)
   const hi = Math.max(...rets)
@@ -22,10 +21,10 @@ export function scoreUniverse(lensName, period) {
 }
 
 // How far each strategy moved against the Balanced ordering.
-export function lensMovers(lensName, period) {
-  const ranked = scoreUniverse(lensName, period)
+export function lensMovers(weights, period) {
+  const ranked = scoreUniverse(weights, period)
   const basePos = {}
-  scoreUniverse('Balanced', period).forEach((s, i) => {
+  scoreUniverse(LENSES.Balanced.weights, period).forEach((s, i) => {
     basePos[s.name] = i
   })
 

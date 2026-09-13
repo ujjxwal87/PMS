@@ -4,17 +4,25 @@ import StrategyPicker from '../components/StrategyPicker.jsx'
 import { useApp } from '../state.jsx'
 import { LENSES, PERIODS, PERIOD_LABEL } from '../data/strategies.js'
 import { lensMovers, scoreUniverse } from '../lib/scoring.js'
+import { CUSTOM_LENS, describeWeights } from '../lib/weights.js'
 import { pct, rank2 } from '../lib/format.js'
 
 const GRID = '40px minmax(160px, 1.9fr) 128px 76px 64px 76px 92px 78px'
 
 export default function Leaderboard() {
   const navigate = useNavigate()
-  const { period, setPeriod, lens, setLens, basket, dropFromBasket } = useApp()
+  const {
+    period, setPeriod, lens, setLens, basket, dropFromBasket,
+    customWeights, setCustomWeight, resetCustomWeights,
+  } = useApp()
 
-  const ranked = scoreUniverse(lens, period)
-  const movers = lensMovers(lens, period)
+  const isCustom = lens === CUSTOM_LENS
   const weightLabels = [PERIOD_LABEL[period], 'Sharpe', 'Upside capture', 'Downside capture']
+  const weights = isCustom ? customWeights : LENSES[lens].weights
+  const blurb = isCustom ? describeWeights(customWeights, weightLabels) : LENSES[lens].blurb
+
+  const ranked = scoreUniverse(weights, period)
+  const movers = lensMovers(weights, period)
   const periodShort = period === '1M' ? '1M ret' : period === '1Y' ? '1Y ret' : `${period} CAGR`
 
   return (
@@ -33,23 +41,56 @@ export default function Leaderboard() {
             <div style={{ alignSelf: 'flex-end' }}>
               <Segmented items={PERIODS} value={period} onChange={setPeriod} />
             </div>
-            <Segmented lg items={Object.keys(LENSES)} value={lens} onChange={setLens} />
+            <Segmented lg items={[...Object.keys(LENSES), CUSTOM_LENS]} value={lens} onChange={setLens} />
           </div>
         </div>
 
-        <div className="stack" style={{ padding: '14px var(--gutter)', gap: 10, borderBottom: '1px solid var(--line)' }}>
-          <Eyebrow>Weights</Eyebrow>
+        <div
+          className="stack"
+          style={{ padding: '14px var(--gutter)', gap: 10, borderBottom: '1px solid var(--line)', background: isCustom ? 'var(--panel)' : 'transparent' }}
+        >
+          <div className="row wrap" style={{ justifyContent: 'space-between', gap: 12 }}>
+            <Eyebrow>{isCustom ? 'Weights · drag to re-score' : 'Weights'}</Eyebrow>
+            {isCustom && (
+              <div className="row wrap" style={{ gap: 14, alignItems: 'center' }}>
+                <span className="note num">Total {customWeights.reduce((a, b) => a + b, 0)}%</span>
+                <button type="button" className="linkish" onClick={resetCustomWeights}>
+                  Reset to balanced
+                </button>
+              </div>
+            )}
+          </div>
+
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(148px, 1fr))', gap: '14px 22px' }}>
-            {LENSES[lens].weights.map((w, i) => (
+            {weights.map((w, i) => (
               <div key={weightLabels[i]} className="stack" style={{ gap: 5, minWidth: 0 }}>
                 <span style={{ fontSize: 12.5, lineHeight: 1.25, color: 'var(--ink-2)', textWrap: 'pretty' }}>
                   {weightLabels[i]}
                 </span>
                 <span className="num" style={{ fontSize: 15, fontWeight: 700 }}>{w}%</span>
-                <Meter thin value={w * 2} tone={i === 3 ? 'gold' : undefined} />
+                {isCustom ? (
+                  <input
+                    className="weight-slider"
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={w}
+                    aria-label={`${weightLabels[i]} weight, percent`}
+                    onChange={(e) => setCustomWeight(i, Number(e.target.value))}
+                  />
+                ) : (
+                  <Meter thin value={w * 2} tone={i === 3 ? 'gold' : undefined} />
+                )}
               </div>
             ))}
           </div>
+
+          {isCustom && (
+            <span className="note">
+              The other three adjust as you drag, so the weights always total 100%.
+            </span>
+          )}
         </div>
 
         <div className="tbl-scroll">
@@ -106,8 +147,8 @@ export default function Leaderboard() {
       </div>
 
       <aside className="rail">
-        <RailBlock label="What the lens does" style={{ gap: 10 }}>
-          <p className="card__body">{LENSES[lens].blurb}</p>
+        <RailBlock label={isCustom ? 'Your weighting' : 'What the lens does'} style={{ gap: 10 }}>
+          <p className="card__body">{blurb}</p>
         </RailBlock>
 
         <RailBlock label="Biggest moves on this lens">

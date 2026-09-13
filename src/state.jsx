@@ -1,5 +1,6 @@
 import { createContext, useContext, useMemo, useState } from 'react'
-import { COMPARE_SET } from './data/strategies.js'
+import { COMPARE_SET, LENSES } from './data/strategies.js'
+import { redistribute } from './lib/weights.js'
 
 const AppContext = createContext(null)
 
@@ -13,6 +14,8 @@ export function AppProvider({ children }) {
   const [basket, setBasket] = useState(COMPARE_SET)
   const [pick, setPick] = useState('Northwick Emerging Leaders')
   const [plan, setPlan] = useState('Investor')
+  // The Custom lens starts from Balanced so the first drag has somewhere to move from.
+  const [customWeights, setCustomWeights] = useState(LENSES.Balanced.weights)
 
   const value = useMemo(
     () => ({
@@ -31,8 +34,12 @@ export function AppProvider({ children }) {
         ),
       pick, setPick,
       plan, setPlan,
+      customWeights,
+      setCustomWeight: (index, value) =>
+        setCustomWeights((cur) => redistribute(cur, index, value)),
+      resetCustomWeights: () => setCustomWeights(LENSES.Balanced.weights),
     }),
-    [period, lens, chips, basket, pick, plan],
+    [period, lens, chips, basket, pick, plan, customWeights],
   )
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
