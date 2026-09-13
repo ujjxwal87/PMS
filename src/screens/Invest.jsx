@@ -44,8 +44,8 @@ export default function Invest() {
       <div className="main-col">
         <div className="banner-panel stack" style={{ gap: 7 }}>
           <Eyebrow tone="gold">Onboarding · about 12 minutes</Eyebrow>
-          <h2 style={{ fontSize: 28 }}>Open a PMS account</h2>
-          <span style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--ink-2)', maxWidth: '70ch' }}>
+          <h2 style={{ fontSize: 30 }}>Open a PMS account</h2>
+          <span style={{ fontSize: 15, lineHeight: 1.55, color: 'var(--ink-2)', maxWidth: '70ch' }}>
             Four steps, no paper. The mandate is signed with Aadhaar e-sign; funds move straight to the manager’s
             designated account.
           </span>
@@ -68,14 +68,14 @@ export default function Invest() {
               <span
                 style={{
                   width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 12, fontWeight: 700, flex: 'none',
+                  fontSize: 13, fontWeight: 700, flex: 'none',
                   background: i < step ? 'var(--accent)' : i === step ? 'var(--ink)' : '#e4ddd3',
                   color: i <= step ? 'var(--surface)' : 'var(--muted)',
                 }}
               >
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <span style={{ fontSize: 13.5, fontWeight: i === step ? 700 : 400, color: i <= step ? 'var(--ink)' : 'var(--muted)' }}>
+              <span style={{ fontSize: 14.5, fontWeight: i === step ? 700 : 400, color: i <= step ? 'var(--ink)' : 'var(--muted)' }}>
                 {label}
               </span>
             </button>
@@ -85,7 +85,7 @@ export default function Invest() {
         <div className="stack" style={{ padding: '24px var(--gutter) 28px', gap: 18 }}>
           {step === 0 && (
             <div className="stack" style={{ gap: 12 }}>
-              <span style={{ fontSize: 15.5, fontWeight: 700 }}>Which strategy are you funding?</span>
+              <span style={{ fontSize: 16.5, fontWeight: 700 }}>Which strategy are you funding?</span>
               {STRATEGIES.slice(0, 4).map((s, i) => {
                 const on = s.name === pick
                 return (
@@ -94,7 +94,7 @@ export default function Invest() {
                     type="button"
                     onClick={() => setPick(s.name)}
                     style={{
-                      display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr) 92px 128px', gap: 14, alignItems: 'center',
+                      display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr) 100px 140px', gap: 14, alignItems: 'center',
                       padding: '14px 16px', textAlign: 'left',
                       border: `1px solid ${on ? 'var(--accent)' : 'var(--line)'}`,
                       background: on ? '#f1f6f2' : 'var(--surface)',
@@ -108,10 +108,10 @@ export default function Invest() {
                       }}
                     />
                     <span className="stack" style={{ gap: 2, minWidth: 0 }}>
-                      <span style={{ fontSize: 15, fontWeight: 700 }}>{s.name}</span>
-                      <span className="note" style={{ fontSize: 12.5 }}>{s.firm}</span>
+                      <span style={{ fontSize: 16, fontWeight: 700 }}>{s.name}</span>
+                      <span className="note" style={{ fontSize: 13.5 }}>{s.firm}</span>
                     </span>
-                    <span className="num" style={{ fontSize: 15, fontWeight: 700, textAlign: 'right' }}>{pct(rets[i])}</span>
+                    <span className="num" style={{ fontSize: 16, fontWeight: 700, textAlign: 'right' }}>{pct(rets[i])}</span>
                     <span className="note" style={{ textAlign: 'right' }}>Min ₹50,00,000</span>
                   </button>
                 )
@@ -121,7 +121,7 @@ export default function Invest() {
 
           {step === 1 && (
             <div className="stack" style={{ gap: 16 }}>
-              <span style={{ fontSize: 15.5, fontWeight: 700 }}>Investor details</span>
+              <span style={{ fontSize: 16.5, fontWeight: 700 }}>Investor details</span>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
                 <Field label="Full name, as on PAN" value={investor.name} onChange={setInv('name')} />
                 <Field label="PAN" value={investor.pan} onChange={setInv('pan')} />
@@ -129,7 +129,7 @@ export default function Invest() {
                 <Field label="Residency" value={investor.residency} onChange={setInv('residency')} />
               </div>
               <div className="stack" style={{ background: 'var(--panel)', border: '1px solid var(--line)', padding: 14, gap: 6 }}>
-                <span style={{ fontSize: 13, fontWeight: 700 }}>KYC fetched from CVL KRA · verified 11 Sep 2026</span>
+                <span style={{ fontSize: 14, fontWeight: 700 }}>KYC fetched from CVL KRA · verified 11 Sep 2026</span>
                 <span className="note">
                   Address, bank and FATCA declarations pulled through. Only the demat mapping needs your confirmation.
                 </span>
@@ -139,7 +139,7 @@ export default function Invest() {
 
           {step === 2 && (
             <div className="stack" style={{ gap: 16 }}>
-              <span style={{ fontSize: 15.5, fontWeight: 700 }}>Funding</span>
+              <span style={{ fontSize: 16.5, fontWeight: 700 }}>Funding</span>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
                 <Field label="Amount" value={funding.amount} onChange={setFund('amount')} />
                 <Field label="Mode" value={funding.mode} onChange={setFund('mode')} />
@@ -154,7 +154,7 @@ export default function Invest() {
 
           {step === 3 && (
             <div className="stack" style={{ gap: 14 }}>
-              <span style={{ fontSize: 15.5, fontWeight: 700 }}>Review and sign</span>
+              <span style={{ fontSize: 16.5, fontWeight: 700 }}>Review and sign</span>
               <div style={{ border: '1px solid var(--line)' }}>
                 {[
                   ['Strategy', pick],
@@ -165,14 +165,14 @@ export default function Invest() {
                   <div
                     key={k}
                     className="kv"
-                    style={{ padding: '12px 16px', fontSize: 14, borderBottom: i < 3 ? '1px solid var(--line-soft)' : 'none', background: i % 2 ? 'var(--panel)' : 'transparent' }}
+                    style={{ padding: '12px 16px', fontSize: 15, borderBottom: i < 3 ? '1px solid var(--line-soft)' : 'none', background: i % 2 ? 'var(--panel)' : 'transparent' }}
                   >
                     <span style={{ color: 'var(--ink-2)' }}>{k}</span>
                     <b>{v}</b>
                   </div>
                 ))}
               </div>
-              <span style={{ fontSize: 13, lineHeight: 1.55, color: 'var(--muted)', maxWidth: '76ch' }}>
+              <span style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--muted)', maxWidth: '76ch' }}>
                 By signing you accept the disclosure document dated 1 Jul 2026 and the PMS agreement. Investments are
                 subject to market risk; past performance is not indicative of future returns.
               </span>
@@ -205,7 +205,7 @@ export default function Invest() {
         </RailBlock>
 
         <RailBlock label="Need a second pair of eyes?" style={{ gap: 11 }}>
-          <span style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--ink-2)' }}>
+          <span style={{ fontSize: 15, lineHeight: 1.5, color: 'var(--ink-2)' }}>
             An analyst can walk the disclosure document with you before you sign. No commission on either side.
           </span>
           <Btn block>Book a 20-minute call</Btn>

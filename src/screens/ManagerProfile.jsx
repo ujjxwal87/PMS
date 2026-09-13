@@ -12,8 +12,8 @@ export default function ManagerProfile() {
         <div className="banner-dark" style={{ display: 'flex', gap: 28, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div className="stack" style={{ flex: 1, minWidth: 300, gap: 8 }}>
             <Eyebrow tone="on-dark">{m.meta}</Eyebrow>
-            <h2 style={{ fontSize: 32, lineHeight: 1.05 }}>{m.name}</h2>
-            <span style={{ fontSize: 15, color: 'var(--on-dark-2)' }}>{m.role}</span>
+            <h2 style={{ fontSize: 34.5, lineHeight: 1.05 }}>{m.name}</h2>
+            <span style={{ fontSize: 16, color: 'var(--on-dark-2)' }}>{m.role}</span>
           </div>
           <div className="row wrap" style={{ gap: 24 }}>
             {m.stats.map((s) => (
@@ -24,10 +24,10 @@ export default function ManagerProfile() {
 
         <div className="stack" style={{ padding: '22px var(--gutter) 18px', borderBottom: '1px solid var(--line)', gap: 10 }}>
           <Eyebrow>How she invests</Eyebrow>
-          <p style={{ margin: 0, fontSize: 15.5, lineHeight: 1.6, maxWidth: '74ch', textWrap: 'pretty' }}>{m.approach}</p>
+          <p style={{ margin: 0, fontSize: 16.5, lineHeight: 1.6, maxWidth: '74ch', textWrap: 'pretty' }}>{m.approach}</p>
           <p
             className="serif"
-            style={{ margin: 0, fontSize: 19, lineHeight: 1.4, borderLeft: '3px solid var(--gold-ink)', paddingLeft: 16, maxWidth: '66ch' }}
+            style={{ margin: 0, fontSize: 20.5, lineHeight: 1.4, borderLeft: '3px solid var(--gold-ink)', paddingLeft: 16, maxWidth: '66ch' }}
           >
             {m.quote}
           </p>
@@ -39,12 +39,12 @@ export default function ManagerProfile() {
           {m.funds.map((f) => (
             <div key={f.name} className="list-row" style={{ borderTop: '1px solid var(--line)', padding: '13px 0', flexWrap: 'wrap' }}>
               <div className="stack" style={{ flex: 1, minWidth: 200, gap: 2 }}>
-                <span style={{ fontSize: 15.5, fontWeight: 700 }}>{f.name}</span>
+                <span style={{ fontSize: 16.5, fontWeight: 700 }}>{f.name}</span>
                 <span className="note">{f.cat} · since {f.since}</span>
               </div>
-              <span className="num" style={{ fontSize: 14, color: 'var(--ink-2)', width: 104, textAlign: 'right' }}>{f.aum}</span>
-              <span className="num" style={{ fontSize: 17, fontWeight: 700, width: 84, textAlign: 'right', color: 'var(--accent)' }}>{f.ret}</span>
-              <span className="tag" style={{ width: 88, textAlign: 'center' }}>{f.status}</span>
+              <span className="num" style={{ fontSize: 15, color: 'var(--ink-2)', width: 112, textAlign: 'right' }}>{f.aum}</span>
+              <span className="num" style={{ fontSize: 18.5, fontWeight: 700, width: 92, textAlign: 'right', color: 'var(--accent)' }}>{f.ret}</span>
+              <span className="tag" style={{ width: 96, textAlign: 'center' }}>{f.status}</span>
             </div>
           ))}
         </div>

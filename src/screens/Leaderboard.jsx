@@ -8,7 +8,7 @@ import { lensMovers, scoreUniverse } from '../lib/scoring.js'
 import { CUSTOM_LENS, describeWeights } from '../lib/weights.js'
 import { pct, rank2 } from '../lib/format.js'
 
-const GRID = '40px minmax(160px, 1.9fr) 128px 76px 64px 76px 92px 78px'
+const GRID = '44px minmax(170px, 1.9fr) 136px 84px 72px 82px 100px 86px'
 
 export default function Leaderboard() {
   const navigate = useNavigate()
@@ -32,8 +32,8 @@ export default function Leaderboard() {
         <div className="banner-panel" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 28, flexWrap: 'wrap' }}>
           <div className="stack" style={{ gap: 7, minWidth: 320, maxWidth: '62ch' }}>
             <Eyebrow tone="gold">Composite ranking · 36-month window</Eyebrow>
-            <h2 style={{ fontSize: 28, lineHeight: 1.1 }}>A strategy earns its place on four metrics at once</h2>
-            <span style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--ink-2)' }}>
+            <h2 style={{ fontSize: 30, lineHeight: 1.1 }}>A strategy earns its place on four metrics at once</h2>
+            <span style={{ fontSize: 15, lineHeight: 1.55, color: 'var(--ink-2)' }}>
               Return alone flatters leveraged books. Upside and downside capture show what was paid for it — switch the
               lens and the order changes.
             </span>
@@ -65,10 +65,10 @@ export default function Leaderboard() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(148px, 1fr))', gap: '14px 22px' }}>
             {weights.map((w, i) => (
               <div key={weightLabels[i]} className="stack" style={{ gap: 5, minWidth: 0 }}>
-                <span style={{ fontSize: 12.5, lineHeight: 1.25, color: 'var(--ink-2)', textWrap: 'pretty' }}>
+                <span style={{ fontSize: 13.5, lineHeight: 1.25, color: 'var(--ink-2)', textWrap: 'pretty' }}>
                   {weightLabels[i]}
                 </span>
-                <span className="num" style={{ fontSize: 15, fontWeight: 700 }}>{w}%</span>
+                <span className="num" style={{ fontSize: 16, fontWeight: 700 }}>{w}%</span>
                 {isCustom ? (
                   <input
                     className="weight-slider"
@@ -95,7 +95,7 @@ export default function Leaderboard() {
         </div>
 
         <div className="tbl-scroll">
-          <div style={{ minWidth: 714 }}>
+          <div style={{ minWidth: 774 }}>
             <div className="tbl-head" style={{ display: 'grid', gridTemplateColumns: GRID }}>
               <div style={{ paddingLeft: 14 }}>#</div>
               <div style={{ padding: '10px' }}>Strategy · firm</div>
@@ -113,16 +113,16 @@ export default function Leaderboard() {
                 className={`tbl-row ${i % 2 ? 'tbl-row--alt' : 'tbl-row--plain'}`}
                 style={{ display: 'grid', gridTemplateColumns: GRID }}
               >
-                <div className="num" style={{ padding: '0 0 0 14px', fontSize: 12.5, fontWeight: 700, color: 'var(--gold-ink)' }}>
+                <div className="num" style={{ padding: '0 0 0 14px', fontSize: 13.5, fontWeight: 700, color: 'var(--gold-ink)' }}>
                   {rank2(i)}
                 </div>
                 <div className="stack" style={{ padding: '12px 10px', gap: 2, minWidth: 0 }}>
                   <span className="truncate" style={{ fontWeight: 700 }}>{r.name}</span>
-                  <span style={{ fontSize: 12.5, color: 'var(--muted)' }}>{r.firm}</span>
+                  <span style={{ fontSize: 13.5, color: 'var(--muted)' }}>{r.firm}</span>
                 </div>
                 <div className="row" style={{ gap: 8 }}>
                   <Meter value={((r.score - 55) / 45) * 100} style={{ flex: 1 }} />
-                  <span className="num" style={{ fontSize: 14, fontWeight: 700 }}>{r.score.toFixed(1)}</span>
+                  <span className="num" style={{ fontSize: 15, fontWeight: 700 }}>{r.score.toFixed(1)}</span>
                 </div>
                 <div className="right num">{pct(r.ret)}</div>
                 <div className="right num">{r.sharpe.toFixed(2)}</div>
@@ -137,7 +137,7 @@ export default function Leaderboard() {
         </div>
 
         <div
-          style={{ padding: '13px var(--gutter)', background: 'var(--panel)', display: 'flex', justifyContent: 'space-between', gap: 16, fontSize: 12.5, color: 'var(--muted)', flexWrap: 'wrap' }}
+          style={{ padding: '13px var(--gutter)', background: 'var(--panel)', display: 'flex', justifyContent: 'space-between', gap: 16, fontSize: 13.5, color: 'var(--muted)', flexWrap: 'wrap' }}
         >
           <span>
             Note: capture ratios against the S&amp;P BSE 500 TRI; excludes strategies with under 36 months of audited
@@ -154,13 +154,13 @@ export default function Leaderboard() {
 
         <RailBlock label="Biggest moves on this lens">
           {movers.length === 0 && (
-            <div className="row" style={{ justifyContent: 'space-between', gap: 10, fontSize: 14 }}>
+            <div className="row" style={{ justifyContent: 'space-between', gap: 10, fontSize: 15 }}>
               <span>No change on this lens</span>
               <span className="delta delta--flat">Balanced order</span>
             </div>
           )}
           {movers.map((m) => (
-            <div key={m.name} className="row" style={{ justifyContent: 'space-between', gap: 10, fontSize: 14 }}>
+            <div key={m.name} className="row" style={{ justifyContent: 'space-between', gap: 10, fontSize: 15 }}>
               <span className="truncate">{m.name}</span>
               <span className={`delta delta--${m.delta > 0 ? 'up' : 'down'}`}>
                 {m.delta > 0 ? '↑ ' : '↓ '}

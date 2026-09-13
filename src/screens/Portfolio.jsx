@@ -16,8 +16,8 @@ export default function Portfolio() {
         <div className="banner-dark" style={{ padding: '24px var(--gutter) 20px', display: 'flex', gap: 32, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div className="stack" style={{ gap: 5 }}>
             <Eyebrow tone="on-dark">Portfolio value · 12 Sep 2026</Eyebrow>
-            <span className="serif num" style={{ fontSize: 40, fontWeight: 700, lineHeight: 1 }}>{lakhs(value)}</span>
-            <span style={{ fontSize: 14, color: 'var(--on-dark-3)' }}>
+            <span className="serif num" style={{ fontSize: 43, fontWeight: 700, lineHeight: 1 }}>{lakhs(value)}</span>
+            <span style={{ fontSize: 15, color: 'var(--on-dark-3)' }}>
               Invested {lakhs(invested)} · gain +{lakhs(value - invested)} (+{gainPct.toFixed(1)}%)
             </span>
           </div>
@@ -36,7 +36,7 @@ export default function Portfolio() {
             return (
               <div key={h.name} className="list-row" style={{ borderTop: '1px solid var(--line)', padding: '16px 0', gap: 22, flexWrap: 'wrap' }}>
                 <div className="stack" style={{ flex: 1, minWidth: 220, gap: 6 }}>
-                  <span style={{ fontSize: 16, fontWeight: 700 }}>{h.name}</span>
+                  <span style={{ fontSize: 17.5, fontWeight: 700 }}>{h.name}</span>
                   <span className="note">{h.firm} · funded {h.since}</span>
                   <Meter value={weight} style={{ maxWidth: 260 }} />
                 </div>

@@ -20,7 +20,7 @@ const ROWS = [
 export default function Compare() {
   const { basket, dropFromBasket } = useApp()
   const picked = basket.map((n) => STRATEGIES.find((s) => s.name === n)).filter(Boolean)
-  const grid = `220px repeat(${Math.max(picked.length, 1)}, minmax(0, 1fr))`
+  const grid = `236px repeat(${Math.max(picked.length, 1)}, minmax(0, 1fr))`
 
   return (
     <div className="pad stack" style={{ gap: 18, paddingBottom: 30 }}>
@@ -29,7 +29,7 @@ export default function Compare() {
           <Eyebrow tone="gold">
             {picked.length ? `${picked.length} strategies · same window` : 'Nothing selected yet'}
           </Eyebrow>
-          <h2 style={{ fontSize: 28 }}>
+          <h2 style={{ fontSize: 30 }}>
             {picked.length
               ? 'Where these books differ is the downside, not the return'
               : 'Search for the books you want side by side'}
@@ -66,7 +66,7 @@ export default function Compare() {
           className="stack"
           style={{ border: '1px dashed var(--line-strong)', padding: '40px 20px', gap: 6, alignItems: 'center', textAlign: 'center' }}
         >
-          <span className="serif" style={{ fontSize: 20, fontWeight: 700 }}>Nothing to compare yet</span>
+          <span className="serif" style={{ fontSize: 21.5, fontWeight: 700 }}>Nothing to compare yet</span>
           <span className="note" style={{ maxWidth: '46ch' }}>
             Search above, or add strategies from the leaderboard rail. Two or three read best side by side.
           </span>
@@ -75,7 +75,7 @@ export default function Compare() {
 
       {picked.length > 0 && (
       <div style={{ border: '1px solid var(--line-strong)', overflowX: 'auto' }}>
-        <div style={{ minWidth: 640 }}>
+        <div style={{ minWidth: 690 }}>
           <div style={{ display: 'grid', gridTemplateColumns: grid }}>
             <div style={{ background: 'var(--ink)' }} />
             {picked.map((s) => (
@@ -84,8 +84,8 @@ export default function Compare() {
                 className="stack"
                 style={{ background: 'var(--ink)', color: 'var(--on-dark)', padding: '16px 18px', gap: 4, borderLeft: '1px solid rgba(244,240,228,0.2)' }}
               >
-                <span className="serif" style={{ fontSize: 17, fontWeight: 700, lineHeight: 1.2 }}>{s.name}</span>
-                <span style={{ fontSize: 12.5, color: 'var(--on-dark-4)' }}>{s.firm}</span>
+                <span className="serif" style={{ fontSize: 18.5, fontWeight: 700, lineHeight: 1.2 }}>{s.name}</span>
+                <span style={{ fontSize: 13.5, color: 'var(--on-dark-4)' }}>{s.firm}</span>
               </div>
             ))}
           </div>
@@ -108,7 +108,7 @@ export default function Compare() {
                   background: ri % 2 ? 'var(--panel)' : 'var(--surface)',
                 }}
               >
-                <div style={{ padding: '12px 18px', fontSize: 13, fontWeight: 700, color: 'var(--ink-2)' }}>{label}</div>
+                <div style={{ padding: '12px 18px', fontSize: 14, fontWeight: 700, color: 'var(--ink-2)' }}>{label}</div>
                 {values.map((v, i) => (
                   <div
                     key={picked[i].name}
@@ -116,7 +116,7 @@ export default function Compare() {
                     style={{
                       padding: '12px 18px',
                       borderLeft: '1px solid var(--line-soft)',
-                      fontSize: 14.5,
+                      fontSize: 15.5,
                       ...(i === best ? { fontWeight: 700, background: 'var(--ok-bg)', color: 'var(--accent-dark)' } : null),
                     }}
                   >

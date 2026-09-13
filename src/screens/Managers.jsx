@@ -12,8 +12,8 @@ export default function Managers() {
       <div className="main-col">
         <div className="stack" style={{ padding: '24px var(--gutter) 18px', borderBottom: '1px solid var(--line-strong)', gap: 7 }}>
           <Eyebrow tone="gold">27 firms · asset-weighted</Eyebrow>
-          <h2 style={{ fontSize: 28 }}>Ranked by the firm, not the flagship</h2>
-          <span style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--ink-2)', maxWidth: '70ch' }}>
+          <h2 style={{ fontSize: 30 }}>Ranked by the firm, not the flagship</h2>
+          <span style={{ fontSize: 15, lineHeight: 1.55, color: 'var(--ink-2)', maxWidth: '70ch' }}>
             Asset-weighted across every strategy the firm runs, so one good book cannot carry the record. Firms with
             under 36 months of audited history are excluded.
           </span>
@@ -26,15 +26,15 @@ export default function Managers() {
           >
             <div className="stack" style={{ flex: 1, minWidth: 300, gap: 9 }}>
               <div className="row" style={{ alignItems: 'baseline', gap: 10 }}>
-                <span className="serif" style={{ fontSize: 20, fontWeight: 700 }}>{f.name}</span>
+                <span className="serif" style={{ fontSize: 21.5, fontWeight: 700 }}>{f.name}</span>
                 <span
-                  style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'var(--ink)', color: 'var(--on-dark-gold)', padding: '3px 9px' }}
+                  style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'var(--ink)', color: 'var(--on-dark-gold)', padding: '3px 9px' }}
                 >
                   {f.rank}
                 </span>
               </div>
               <span className="note">{f.meta}</span>
-              <span style={{ fontSize: 14, lineHeight: 1.55, maxWidth: '66ch' }}>{f.blurb}</span>
+              <span style={{ fontSize: 15, lineHeight: 1.55, maxWidth: '66ch' }}>{f.blurb}</span>
               <div className="row wrap" style={{ gap: 9 }}>
                 <Btn onClick={() => navigate(`/managers/${slug(f.name)}`)}>View profile</Btn>
                 <span className="btn btn--quiet">{f.funds}</span>

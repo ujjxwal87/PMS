@@ -4,7 +4,7 @@ import { FEE_AMOUNTS, FEE_RETURNS } from '../data/content.js'
 import { cheapestOf, priceFeeModels } from '../lib/fees.js'
 import { rupees } from '../lib/format.js'
 
-const GRID = 'minmax(0, 1.6fr) 84px 150px 120px 96px 130px'
+const GRID = 'minmax(0, 1.6fr) 92px 162px 132px 104px 142px'
 
 export default function Fees() {
   const [amountIdx, setAmountIdx] = useState(1)
@@ -33,8 +33,8 @@ export default function Fees() {
     <div className="pad stack" style={{ gap: 18, paddingBottom: 30 }}>
       <div className="stack" style={{ gap: 7, maxWidth: '72ch' }}>
         <Eyebrow tone="gold">Fee workings · one year, one account</Eyebrow>
-        <h2 style={{ fontSize: 28 }}>A profit-only fee is not always the cheap one</h2>
-        <span style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--ink-2)' }}>
+        <h2 style={{ fontSize: 30 }}>A profit-only fee is not always the cheap one</h2>
+        <span style={{ fontSize: 15, lineHeight: 1.55, color: 'var(--ink-2)' }}>
           Set the amount and the gross year, and the three structures are priced side by side — fixed fee, performance
           share above a hurdle, and the effective cost on the whole account.
         </span>
@@ -65,7 +65,7 @@ export default function Fees() {
       </div>
 
       <div style={{ border: '1px solid var(--line-strong)', overflowX: 'auto' }}>
-        <div style={{ minWidth: 780 }}>
+        <div style={{ minWidth: 844 }}>
           <div className="tbl-head" style={{ display: 'grid', gridTemplateColumns: GRID }}>
             <div style={{ padding: '10px 16px' }}>Structure</div>
             <div className="right">Fixed</div>
@@ -87,27 +87,27 @@ export default function Fees() {
                 }}
               >
                 <div className="stack" style={{ padding: '14px 16px', gap: 3, minWidth: 0 }}>
-                  <span className="row" style={{ gap: 9, fontSize: 15, fontWeight: 700 }}>
+                  <span className="row" style={{ gap: 9, fontSize: 16, fontWeight: 700 }}>
                     {f.model.name}
                     {best && (
                       <span
-                        style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', background: 'var(--accent)', color: 'var(--surface)', padding: '3px 8px' }}
+                        style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', background: 'var(--accent)', color: 'var(--surface)', padding: '3px 8px' }}
                       >
                         Cheapest here
                       </span>
                     )}
                   </span>
-                  <span className="note" style={{ fontSize: 12.5 }}>{f.model.detail}</span>
+                  <span className="note" style={{ fontSize: 13.5 }}>{f.model.detail}</span>
                 </div>
-                <div className="right num" style={{ padding: '0 8px', fontSize: 14 }}>
+                <div className="right num" style={{ padding: '0 8px', fontSize: 15 }}>
                   {f.model.fixed ? `${f.model.fixed.toFixed(2)}%` : '—'}
                 </div>
-                <div className="right num" style={{ padding: '0 8px', fontSize: 14 }}>
+                <div className="right num" style={{ padding: '0 8px', fontSize: 15 }}>
                   {f.model.share ? `${f.model.share}% over ${f.model.hurdle}%` : '—'}
                 </div>
-                <div className="right num" style={{ padding: '0 8px', fontSize: 15, fontWeight: 700 }}>{rupees(f.total)}</div>
-                <div className="right num" style={{ padding: '0 8px', fontSize: 14 }}>{f.effective.toFixed(2)}%</div>
-                <div className="right num" style={{ padding: '0 16px 0 8px', fontSize: 15, fontWeight: 700, color: 'var(--accent-dark)' }}>
+                <div className="right num" style={{ padding: '0 8px', fontSize: 16, fontWeight: 700 }}>{rupees(f.total)}</div>
+                <div className="right num" style={{ padding: '0 8px', fontSize: 15 }}>{f.effective.toFixed(2)}%</div>
+                <div className="right num" style={{ padding: '0 16px 0 8px', fontSize: 16, fontWeight: 700, color: 'var(--accent-dark)' }}>
                   {rupees(f.net)}
                 </div>
               </div>

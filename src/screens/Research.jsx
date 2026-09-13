@@ -18,7 +18,7 @@ export default function Research() {
       <div className="main-col">
         <div className="stack pad" style={{ borderBottom: '1px solid var(--line-strong)', gap: 12 }}>
           <Eyebrow tone="gold">Note 214 · 12 pages · published 11 Sep</Eyebrow>
-          <h2 style={{ fontSize: 32, lineHeight: 1.08, textWrap: 'balance' }}>
+          <h2 style={{ fontSize: 34.5, lineHeight: 1.08, textWrap: 'balance' }}>
             What downside capture tells you that drawdown does not
           </h2>
           <p className="lede" style={{ maxWidth: '74ch' }}>
@@ -49,9 +49,9 @@ export default function Research() {
         <div style={{ padding: '0 var(--gutter) 24px' }}>
           {rows.map((a) => (
             <div key={a.title} className="list-row" style={{ borderTop: '1px solid var(--line)', alignItems: 'baseline', gap: 20 }}>
-              <span className="num" style={{ fontSize: 12.5, color: 'var(--muted-2)', width: 76, flex: 'none' }}>{a.date}</span>
+              <span className="num" style={{ fontSize: 13.5, color: 'var(--muted-2)', width: 82, flex: 'none' }}>{a.date}</span>
               <div className="stack" style={{ flex: 1, minWidth: 0, gap: 3 }}>
-                <span style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.3 }}>{a.title}</span>
+                <span style={{ fontSize: 17.5, fontWeight: 700, lineHeight: 1.3 }}>{a.title}</span>
                 <span className="note">{a.kind} · {a.pages}</span>
               </div>
             </div>
@@ -61,23 +61,23 @@ export default function Research() {
 
       <aside className="rail">
         <RailBlock label="Subscription" style={{ gap: 11, padding: '20px 22px' }}>
-          <span className="serif" style={{ fontSize: 19, fontWeight: 700, lineHeight: 1.2 }}>
+          <span className="serif" style={{ fontSize: 20.5, fontWeight: 700, lineHeight: 1.2 }}>
             Two notes a month, plus the underlying data
           </span>
-          <div className="stack" style={{ gap: 6, fontSize: 14, color: 'var(--ink-2)' }}>
+          <div className="stack" style={{ gap: 6, fontSize: 15, color: 'var(--ink-2)' }}>
             <span>· Every note since 2021</span>
             <span>· Screener exports as CSV</span>
             <span>· Analyst calls, twice a quarter</span>
           </div>
           <Btn block>₹24,000 a year</Btn>
-          <span style={{ fontSize: 12.5, color: 'var(--muted)' }}>Advisors: seat pricing from ₹1,80,000 for five.</span>
+          <span style={{ fontSize: 13.5, color: 'var(--muted)' }}>Advisors: seat pricing from ₹1,80,000 for five.</span>
         </RailBlock>
 
         <RailBlock label="Most read this quarter">
           {MOST_READ.map((m) => (
             <div key={m.n} className="row" style={{ alignItems: 'baseline', gap: 10 }}>
-              <span className="serif" style={{ fontSize: 18, fontWeight: 700, color: 'var(--ghost)' }}>{m.n}</span>
-              <span style={{ fontSize: 14.5, fontWeight: 700, lineHeight: 1.3 }}>{m.title}</span>
+              <span className="serif" style={{ fontSize: 19.5, fontWeight: 700, color: 'var(--ghost)' }}>{m.n}</span>
+              <span style={{ fontSize: 15.5, fontWeight: 700, lineHeight: 1.3 }}>{m.title}</span>
             </div>
           ))}
         </RailBlock>

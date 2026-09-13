@@ -13,8 +13,8 @@ export default function Plans() {
       <div className="row wrap" style={{ alignItems: 'flex-end', justifyContent: 'space-between', gap: 28 }}>
         <div className="stack" style={{ gap: 7, maxWidth: '66ch' }}>
           <Eyebrow tone="gold">Access · billed annually, cancel any time</Eyebrow>
-          <h2 style={{ fontSize: 28 }}>Three ways in, depending on who you are</h2>
-          <span style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--ink-2)' }}>
+          <h2 style={{ fontSize: 30 }}>Three ways in, depending on who you are</h2>
+          <span style={{ fontSize: 15, lineHeight: 1.55, color: 'var(--ink-2)' }}>
             The data is the same for everyone. What changes is how many seats, whether outputs are client-ready, and
             whether you are listing strategies rather than buying them.
           </span>
@@ -29,7 +29,7 @@ export default function Plans() {
             <input value={email} onChange={(e) => setEmail(e.target.value)} aria-label="Email address" />
           </label>
           <Btn block onClick={() => setSent(true)}>{sent ? 'Link sent ✓' : 'Email me a sign-in link'}</Btn>
-          <span style={{ fontSize: 12.5, color: 'var(--muted)' }}>No passwords. The link lasts 15 minutes.</span>
+          <span style={{ fontSize: 13.5, color: 'var(--muted)' }}>No passwords. The link lasts 15 minutes.</span>
         </div>
       </div>
 
@@ -50,15 +50,15 @@ export default function Plans() {
             >
               <Eyebrow>{p.name}</Eyebrow>
               <div className="row wrap" style={{ alignItems: 'baseline', gap: 8, minHeight: 41 }}>
-                <span className="serif" style={{ fontSize: 30, fontWeight: 700, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
+                <span className="serif" style={{ fontSize: 32.5, fontWeight: 700, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
                   {p.price}
                 </span>
                 <span className="note">{p.per}</span>
               </div>
-              <span style={{ fontSize: 13.5, color: 'var(--ink-2)' }}>{p.who}</span>
+              <span style={{ fontSize: 14.5, color: 'var(--ink-2)' }}>{p.who}</span>
               <div className="stack" style={{ gap: 7, borderTop: '1px solid var(--line)', paddingTop: 12 }}>
                 {p.feats.map((f) => (
-                  <span key={f} style={{ fontSize: 14, lineHeight: 1.45 }}>· {f}</span>
+                  <span key={f} style={{ fontSize: 15, lineHeight: 1.45 }}>· {f}</span>
                 ))}
               </div>
               <span className={`btn btn--${on ? 'primary' : 'ghost'} btn--block btn--lg`} style={{ marginTop: 'auto' }}>

@@ -59,8 +59,8 @@ export const KV = ({ label, value, lined = true }) => (
 
 export const TitleMeta = ({ title, meta }) => (
   <div className="stack" style={{ gap: 3 }}>
-    <span style={{ fontSize: 14.5, fontWeight: 700, lineHeight: 1.3 }}>{title}</span>
-    <span style={{ fontSize: 12.5, color: 'var(--muted)' }}>{meta}</span>
+    <span style={{ fontSize: 15.5, fontWeight: 700, lineHeight: 1.3 }}>{title}</span>
+    <span style={{ fontSize: 13.5, color: 'var(--muted)' }}>{meta}</span>
   </div>
 )
 

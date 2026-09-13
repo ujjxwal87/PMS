@@ -23,7 +23,7 @@ export default function Discover() {
         <div className="pad" style={{ borderBottom: '1px solid var(--line-strong)', display: 'flex', gap: 32, flexWrap: 'wrap' }}>
           <div className="stack" style={{ flex: 1, minWidth: 320, gap: 12 }}>
             <Eyebrow tone="gold">This month’s read</Eyebrow>
-            <h2 style={{ fontSize: 32, lineHeight: 1.08, textWrap: 'balance' }}>
+            <h2 style={{ fontSize: 34.5, lineHeight: 1.08, textWrap: 'balance' }}>
               Mid-cap books carried the quarter — but only where the manager stayed put
             </h2>
             <p className="lede">
@@ -39,7 +39,7 @@ export default function Discover() {
 
           <div
             className="stack"
-            style={{ width: 288, flex: 'none', background: 'var(--panel-deep)', border: '1px solid var(--line)', padding: 16, gap: 10 }}
+            style={{ width: 300, flex: 'none', background: 'var(--panel-deep)', border: '1px solid var(--line)', padding: 16, gap: 10 }}
           >
             <Eyebrow>Universe at a glance</Eyebrow>
             <UniverseChart />
@@ -68,15 +68,15 @@ export default function Discover() {
             <div key={r.name} className="list-row" style={{ borderTop: '1px solid var(--line)' }}>
               <span className="rank-no num">{rank2(i)}</span>
               <div className="stack" style={{ flex: 1, minWidth: 0, gap: 2 }}>
-                <span style={{ fontSize: 16.5, fontWeight: 700 }}>{r.name}</span>
+                <span style={{ fontSize: 18, fontWeight: 700 }}>{r.name}</span>
                 <span className="note">
                   {r.firm} · {DISCOVER_NOTES[i]}
                 </span>
               </div>
-              <span className="num" style={{ fontSize: 19, fontWeight: 700, color: 'var(--accent)' }}>
+              <span className="num" style={{ fontSize: 20.5, fontWeight: 700, color: 'var(--accent)' }}>
                 {pct(r.ret)}
               </span>
-              <span className="note num" style={{ width: 96, textAlign: 'right' }}>{crores(r.aum)}</span>
+              <span className="note num" style={{ width: 104, textAlign: 'right' }}>{crores(r.aum)}</span>
             </div>
           ))}
         </div>
@@ -95,7 +95,7 @@ export default function Discover() {
               )
             })}
           </div>
-          <span style={{ fontSize: 12.5, color: 'var(--muted)' }}>{matchCount} strategies match</span>
+          <span style={{ fontSize: 13.5, color: 'var(--muted)' }}>{matchCount} strategies match</span>
         </RailBlock>
 
         <RailBlock label="Newsflow" style={{ gap: 13 }}>
@@ -107,7 +107,7 @@ export default function Discover() {
         <RailBlock label="Next live session" style={{ gap: 11 }}>
           <div className="dark-card">
             <Eyebrow tone="on-dark">Thu 17 Sep · 6:30 pm</Eyebrow>
-            <span className="serif" style={{ fontSize: 18, fontWeight: 700, lineHeight: 1.2 }}>
+            <span className="serif" style={{ fontSize: 19.5, fontWeight: 700, lineHeight: 1.2 }}>
               Anaya Rao on holding concentrated books through a drawdown
             </span>
             <Btn variant="onDark" style={{ alignSelf: 'flex-start' }} onClick={() => navigate('/events')}>

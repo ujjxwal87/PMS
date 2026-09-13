@@ -7,10 +7,10 @@ export default function Learn() {
       <div className="main-col">
         <div className="stack" style={{ padding: '26px var(--gutter) 20px', borderBottom: '1px solid var(--line-strong)', gap: 8 }}>
           <Eyebrow tone="gold">Knowledge centre · six chapters, about an hour</Eyebrow>
-          <h2 style={{ fontSize: 30, lineHeight: 1.1, textWrap: 'balance' }}>
+          <h2 style={{ fontSize: 32.5, lineHeight: 1.1, textWrap: 'balance' }}>
             Everything you should know before ₹50 lakh leaves your account
           </h2>
-          <span style={{ fontSize: 15, lineHeight: 1.55, color: 'var(--ink-2)', maxWidth: '70ch' }}>
+          <span style={{ fontSize: 16, lineHeight: 1.55, color: 'var(--ink-2)', maxWidth: '70ch' }}>
             Written for first-time PMS investors and for advisors who have to explain it. No product pitch — each
             chapter ends with the questions to put to the manager.
           </span>
@@ -21,9 +21,9 @@ export default function Learn() {
         >
           {GUIDES.map((g) => (
             <article key={g.n} className="card">
-              <span className="serif" style={{ fontSize: 22, fontWeight: 700, color: 'var(--ghost)' }}>{g.n}</span>
+              <span className="serif" style={{ fontSize: 24, fontWeight: 700, color: 'var(--ghost)' }}>{g.n}</span>
               <span className="card__title">{g.title}</span>
-              <span style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--ink-2)' }}>{g.body}</span>
+              <span style={{ fontSize: 15, lineHeight: 1.55, color: 'var(--ink-2)' }}>{g.body}</span>
               <span className="note" style={{ marginTop: 'auto' }}>{g.mins} read</span>
             </article>
           ))}
@@ -43,7 +43,7 @@ export default function Learn() {
         </RailBlock>
 
         <RailBlock label="Still unsure?" style={{ gap: 10 }}>
-          <span style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--ink-2)' }}>
+          <span style={{ fontSize: 15, lineHeight: 1.5, color: 'var(--ink-2)' }}>
             An analyst will read a disclosure document with you, line by line, before you commit.
           </span>
           <Btn block>Book a 20-minute call</Btn>
