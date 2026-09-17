@@ -56,6 +56,11 @@ def main():
         if got is None:
             failed.append(d)
         else:
+            # Written immediately, not held for a batch at the end: two runs
+            # were killed mid-fetch (system memory pressure) and lost
+            # everything they had gathered. The placeholder sweep below
+            # re-reads from disk, so it still sees them.
+            (OUT / f"{d}.png").write_bytes(got)
             blobs[d] = got
         if i % 50 == 0:
             print(f"  {i}/{len(domains)}")
@@ -68,9 +73,9 @@ def main():
     written = 0
     for d, b in blobs.items():
         if hashlib.sha256(b).hexdigest() in placeholders:
+            (OUT / f"{d}.png").unlink(missing_ok=True)
             failed.append(d)
             continue
-        (OUT / f"{d}.png").write_bytes(b)
         written += 1
 
     # The app needs to know which logos exist: Vite answers a missing file with
