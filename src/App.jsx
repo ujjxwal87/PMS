@@ -35,8 +35,8 @@ export default function App() {
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/managers" element={<Managers />} />
-          <Route path="/managers/:slug" element={<ManagerProfile />} />
-          <Route path="/strategy/:slug" element={<StrategyDetail />} />
+          <Route path="/managers/:id" element={<ManagerProfile />} />
+          <Route path="/strategy/:id" element={<StrategyDetail />} />
           <Route path="/research" element={<Research />} />
           <Route path="/events" element={<Events />} />
           <Route path="/learn" element={<Learn />} />

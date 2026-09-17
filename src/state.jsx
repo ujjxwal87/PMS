@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState } from 'react'
-import { COMPARE_SET, LENSES } from './data/strategies.js'
+import { LENSES } from './data/lenses.js'
 import { redistribute } from './lib/weights.js'
 
 const AppContext = createContext(null)
@@ -10,8 +10,12 @@ export const MAX_COMPARE = 3
 export function AppProvider({ children }) {
   const [period, setPeriod] = useState('5Y')
   const [lens, setLens] = useState('Balanced')
-  const [chips, setChips] = useState(['Multi-cap', 'Min ≤ ₹50 L'])
-  const [basket, setBasket] = useState(COMPARE_SET)
+  // Screener facets are asset classes -- the only facet either source files.
+  const [chips, setChips] = useState([])
+  // Entries are { id, name, firm } from the live universe. The name rides along
+  // so the rail can label a pick without re-querying; the id is what Compare
+  // refetches on, since that is the only stable handle across months.
+  const [basket, setBasket] = useState([])
   const [pick, setPick] = useState('Northwick Emerging Leaders')
   const [plan, setPlan] = useState('Investor')
   // Which minimum-ticket band to show; 'any' shows everything.
@@ -28,11 +32,13 @@ export function AppProvider({ children }) {
         setChips((cur) => (cur.includes(c) ? cur.filter((x) => x !== c) : cur.concat(c))),
       basket,
       basketFull: basket.length >= MAX_COMPARE,
-      dropFromBasket: (name) => setBasket((cur) => cur.filter((b) => b !== name)),
+      dropFromBasket: (id) => setBasket((cur) => cur.filter((b) => b.id !== id)),
       // Adds until the comparison is full; the picker hides when there is no room.
-      addToBasket: (name) =>
+      addToBasket: (s) =>
         setBasket((cur) =>
-          cur.includes(name) || cur.length >= MAX_COMPARE ? cur : cur.concat(name),
+          cur.some((b) => b.id === s.id) || cur.length >= MAX_COMPARE
+            ? cur
+            : cur.concat({ id: s.id, name: s.name, firm: s.firm }),
         ),
       pick, setPick,
       plan, setPlan,

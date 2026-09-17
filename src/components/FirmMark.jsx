@@ -1,22 +1,18 @@
-// Each firm gets a geometric mark built from the site palette — these are
-// invented houses, so there is no real logo to use. A firm with no entry falls
-// back to a device and ground picked deterministically from its name, so any
-// strategy added later still gets a stable mark.
+import { useEffect, useState } from 'react'
+import { LOGO_DOMAINS } from '../data/logo-domains.js'
+
+// A firm's own logo where we have one, and a generated geometric mark where we
+// do not.
+//
+// Logos are served from our own /logos directory, keyed on the domain derived
+// from the contact address in the firm's SEBI filing. About two thirds of firms
+// have one; the rest fall back to a device and ground picked deterministically
+// from the name, so every firm gets a stable mark either way. The fallback also
+// catches a logo that 404s or fails to decode at render time.
 
 const DEVICES = ['peak', 'leaf', 'hills', 'ring', 'bars', 'frame', 'zig', 'split', 'prism']
 
 const GROUNDS = ['#12312F', '#12615A', '#7A2331', '#B08A4A', '#0C443F', '#3F5351']
-
-const MARKS = {
-  'Northwick Capital': ['peak', '#12312F'],
-  'Vireo Capital': ['leaf', '#12615A'],
-  'Sevenhill Advisors': ['hills', '#7A2331'],
-  'Rukmini Capital': ['ring', '#B08A4A'],
-  'Marlowe Asset Mgmt': ['bars', '#12312F'],
-  'Bhatia & Co': ['frame', '#3F5351'],
-  'Karanth Investments': ['zig', '#12615A'],
-  'Aldern Partners': ['split', '#0C443F'],
-}
 
 function hash(text) {
   let h = 0
@@ -25,7 +21,6 @@ function hash(text) {
 }
 
 function markFor(firm) {
-  if (MARKS[firm]) return MARKS[firm]
   const h = hash(firm || '')
   return [DEVICES[h % DEVICES.length], GROUNDS[h % GROUNDS.length]]
 }
@@ -98,9 +93,34 @@ function Device({ name, fg, accent }) {
   }
 }
 
-export default function FirmMark({ firm, size = 28, tone }) {
+export default function FirmMark({ firm, domain, size = 28, tone }) {
   const [device, ground] = markFor(firm)
   const onDark = tone === 'dark'
+  // Reset when the domain changes, so a recycled row does not keep the previous
+  // firm's failure state and hide a logo we actually have.
+  const [broken, setBroken] = useState(false)
+  useEffect(() => { setBroken(false) }, [domain])
+
+  if (domain && LOGO_DOMAINS.has(domain) && !broken) {
+    return (
+      <img
+        src={`/logos/${domain}.png`}
+        alt=""
+        aria-hidden="true"
+        width={size}
+        height={size}
+        loading="lazy"
+        onError={() => setBroken(true)}
+        style={{
+          display: 'block', flex: 'none', width: size, height: size,
+          objectFit: 'contain',
+          background: onDark ? 'rgba(244,240,228,0.92)' : 'var(--surface)',
+          border: '1px solid var(--line)',
+          padding: 2,
+        }}
+      />
+    )
+  }
 
   return (
     <svg

@@ -1,29 +1,78 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Btn, Eyebrow, NoteCard } from '../components/ui.jsx'
 import StrategyPicker from '../components/StrategyPicker.jsx'
 import FirmMark from '../components/FirmMark.jsx'
 import { useApp } from '../state.jsx'
-import { STRATEGIES } from '../data/strategies.js'
-import { crores, pct, shortRupees } from '../lib/format.js'
-import { slugify } from '../lib/slug.js'
+import { loadByIds } from '../lib/universe.js'
+import { pct } from '../lib/format.js'
 
-// [label, accessor, which end wins]
+const crore = (n) => (n === null || n === undefined ? '—' : `₹${Math.round(n).toLocaleString('en-IN')} Cr`)
+const dp2 = (n) => (n === null || n === undefined ? '—' : n.toFixed(2))
+const maybePct = (n, dp = 1) => (n === null || n === undefined ? '—' : pct(n, dp))
+
+// [label, accessor, which end wins]. Nothing here is estimated: every row is a
+// filed figure or computed from the filed monthly series. Fee, minimum ticket
+// and holdings are absent because no source publishes them.
 const ROWS = [
-  ['5-yr CAGR, net', (s) => pct(s.cagr), 'max'],
-  ['Sharpe, 36-mo', (s) => s.sharpe.toFixed(2), 'max'],
-  ['Upside capture', (s) => `${s.upside}%`, 'max'],
-  ['Downside capture', (s) => `${s.downside}%`, 'min'],
-  ['Max drawdown', (s) => pct(s.maxDD), 'max'],
-  ['AUM', (s) => crores(s.aum), null],
-  ['Minimum investment', (s) => shortRupees(s.minInvestment), 'min'],
-  ['Fee', () => '1.5% + 10% over 10%', null],
-  ['Holdings', (s) => String(s.holdings), null],
+  ['1-year return', (s) => maybePct(s.returns['1Y']), 'max'],
+  ['3-year CAGR', (s) => maybePct(s.returns['3Y']), 'max'],
+  ['5-year CAGR', (s) => maybePct(s.returns['5Y']), 'max'],
+  ['Sharpe, 36-mo', (s) => dp2(s.sharpe), 'max'],
+  // Drawdown is negative, so the largest value is the shallowest fall.
+  ['Max drawdown', (s) => maybePct(s.maxDD), 'max'],
+  ['Volatility, annualised', (s) => maybePct(s.vol, 0), 'min'],
+  ['AUM', (s) => crore(s.aum), null],
+  ['Asset class', (s) => s.assetClass || '—', null],
+  ['Benchmark', (s) => s.benchmark || '—', null],
+  ['Months of filed history', (s) => String(s.months ?? 0), null],
 ]
 
 export default function Compare() {
   const { basket, dropFromBasket } = useApp()
-  const picked = basket.map((n) => STRATEGIES.find((s) => s.name === n)).filter(Boolean)
+  const [picked, setPicked] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  const ids = basket.map((b) => b.id).join(',')
+
+  useEffect(() => {
+    if (!ids) {
+      setPicked([])
+      return undefined
+    }
+    let live = true
+    setLoading(true)
+    setError(null)
+
+    loadByIds(ids.split(','))
+      .then((rows) => { if (live) { setPicked(rows); setLoading(false) } })
+      .catch((err) => { if (live) { setError(err); setPicked([]); setLoading(false) } })
+
+    return () => { live = false }
+  }, [ids])
+
   const grid = `236px repeat(${Math.max(picked.length, 1)}, minmax(0, 1fr))`
+
+  // A takeaway only earns its place when two books actually differ; with one
+  // column there is nothing to contrast, so it is left out rather than padded.
+  const takeaway = (() => {
+    if (picked.length < 2) return null
+    const withDD = picked.filter((s) => s.maxDD !== null && s.returns['3Y'] !== null)
+    if (withDD.length < 2) return null
+    const safest = withDD.reduce((a, b) => (a.maxDD > b.maxDD ? a : b))
+    const richest = withDD.reduce((a, b) => (a.returns['3Y'] > b.returns['3Y'] ? a : b))
+    if (safest.id === richest.id) {
+      return `${safest.name} leads on both counts here — the best 3-year CAGR of the set at ${pct(
+        safest.returns['3Y'],
+      )}, and the shallowest fall at ${pct(safest.maxDD)}. On this window there is no trade to weigh.`
+    }
+    const retGap = richest.returns['3Y'] - safest.returns['3Y']
+    const ddGap = safest.maxDD - richest.maxDD
+    return `${safest.name} gives up ${retGap.toFixed(1)} points of 3-year CAGR against ${richest.name}, and fell ${ddGap.toFixed(
+      1,
+    )} points less from its peak. Whether that trade is worth taking depends on how long the money can sit.`
+  })()
 
   return (
     <div className="pad stack" style={{ gap: 18, paddingBottom: 30 }}>
@@ -49,22 +98,37 @@ export default function Compare() {
       >
         <Eyebrow>Comparing</Eyebrow>
         <div className="row wrap" style={{ gap: 8, flex: 1, minWidth: 220 }}>
-          {picked.map((s) => (
-            <span key={s.name} className="chip chip--on" style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
-              {s.name}
-              <button type="button" aria-label={`Remove ${s.name}`} onClick={() => dropFromBasket(s.name)}>
+          {basket.map((b) => (
+            <span key={b.id} className="chip chip--on" style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
+              {b.name}
+              <button type="button" aria-label={`Remove ${b.name}`} onClick={() => dropFromBasket(b.id)}>
                 ×
               </button>
             </span>
           ))}
-          {picked.length === 0 && <span className="note">Add up to three strategies.</span>}
+          {basket.length === 0 && <span className="note">Add up to three strategies.</span>}
         </div>
         <div style={{ width: 300, maxWidth: '100%' }}>
           <StrategyPicker placeholder="Search a PMS strategy or firm…" />
         </div>
       </div>
 
-      {picked.length === 0 && (
+      {error && (
+        <div className="stack" style={{ border: '1px dashed var(--line-strong)', padding: '32px 20px', gap: 6, alignItems: 'center', textAlign: 'center' }}>
+          <span className="serif" style={{ fontSize: 19, fontWeight: 700, color: 'var(--neg)' }}>
+            Could not load these strategies
+          </span>
+          <span className="note">{String(error.message || error)}</span>
+        </div>
+      )}
+
+      {!error && loading && picked.length === 0 && (
+        <div className="stack" style={{ border: '1px dashed var(--line-strong)', padding: '40px 20px', gap: 6, alignItems: 'center' }}>
+          <span className="note">Loading filings…</span>
+        </div>
+      )}
+
+      {!error && !loading && basket.length === 0 && (
         <div
           className="stack"
           style={{ border: '1px dashed var(--line-strong)', padding: '40px 20px', gap: 6, alignItems: 'center', textAlign: 'center' }}
@@ -83,12 +147,12 @@ export default function Compare() {
             <div style={{ background: 'var(--ink)' }} />
             {picked.map((s) => (
               <div
-                key={s.name}
+                key={s.id}
                 className="stack"
                 style={{ background: 'var(--ink)', color: 'var(--on-dark)', padding: '16px 18px', gap: 6, borderLeft: '1px solid rgba(244,240,228,0.2)' }}
               >
-                <FirmMark firm={s.firm} size={30} tone="dark" />
-                <Link to={`/strategy/${slugify(s.name)}`} className="serif row-link row-link--onDark" style={{ fontSize: 18.5, lineHeight: 1.2 }}>
+                <FirmMark firm={s.firm} domain={s.domain} size={30} tone="dark" />
+                <Link to={`/strategy/${s.id}`} className="serif row-link row-link--onDark" style={{ fontSize: 18.5, lineHeight: 1.2 }}>
                   {s.name}
                 </Link>
                 <span style={{ fontSize: 13.5, color: 'var(--on-dark-4)' }}>{s.firm}</span>
@@ -98,10 +162,18 @@ export default function Compare() {
 
           {ROWS.map(([label, get, dir], ri) => {
             const values = picked.map(get)
-            const nums = values.map((v) => parseFloat(String(v).replace(/[^\-0-9.]/g, '')))
+            // Only rows that actually parsed to a number get a winner; a column
+            // of "—" must never be highlighted as the best of anything.
+            const nums = values.map((v) => {
+              const n = parseFloat(String(v).replace(/[^\-0-9.]/g, ''))
+              return Number.isFinite(n) ? n : null
+            })
+            const live = nums.filter((n) => n !== null)
             let best = -1
-            if (dir === 'max') best = nums.indexOf(Math.max(...nums))
-            if (dir === 'min') best = nums.indexOf(Math.min(...nums))
+            if (dir && live.length > 1) {
+              const target = dir === 'max' ? Math.max(...live) : Math.min(...live)
+              best = nums.indexOf(target)
+            }
 
             return (
               <div
@@ -117,7 +189,7 @@ export default function Compare() {
                 <div style={{ padding: '12px 18px', fontSize: 14, fontWeight: 700, color: 'var(--ink-2)' }}>{label}</div>
                 {values.map((v, i) => (
                   <div
-                    key={picked[i].name}
+                    key={picked[i].id}
                     className="num"
                     style={{
                       padding: '12px 18px',
@@ -136,20 +208,23 @@ export default function Compare() {
       </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
-        <NoteCard label="Key takeaway" panel>
-          Vireo gives up ~3.7 points of return against Northwick but keeps 13 points more capital in the two worst
-          quarters. On a five-year hold the gap closes; on a three-year hold it does not.
-        </NoteCard>
-        <NoteCard label="Overlap in holdings">
-          Northwick and Sevenhill share 7 of 18 names — ~34% by weight. Holding both is less diversification than the
-          labels suggest.
-        </NoteCard>
-        <NoteCard label="Discussion questions">
-          Is the fee step-up on Sevenhill’s performance share acceptable at a ₹1 cr minimum? Who covers the exit load if
-          the mandate changes?
-        </NoteCard>
-      </div>
+      {picked.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
+          {takeaway && (
+            <NoteCard label="Key takeaway" panel>
+              {takeaway}
+            </NoteCard>
+          )}
+          <NoteCard label="What this table cannot tell you">
+            Holdings, overlap between books, fee structure and minimum ticket are not published by SEBI or APMI. Ask the
+            manager for these directly — nothing here is a substitute.
+          </NoteCard>
+          <NoteCard label="Reading the window">
+            Sharpe, volatility and drawdown come from the monthly returns each manager files with APMI, over the trailing
+            36 months. A strategy with a shorter record than its peers is not being compared on the same window.
+          </NoteCard>
+        </div>
+      )}
     </div>
   )
 }

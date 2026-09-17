@@ -1,6 +1,7 @@
-// Weight sets always total 100. When one slider moves, the other three absorb the
+// Weight sets always total 100. When one slider moves, the others absorb the
 // difference in proportion to where they already sit, so the user only ever thinks
-// about the metric they are dragging.
+// about the metric they are dragging. Length-agnostic: the live leaderboard runs
+// three metrics, but nothing here assumes that.
 
 export const CUSTOM_LENS = 'Custom'
 
@@ -45,7 +46,7 @@ export function describeWeights(weights, labels) {
 
   if (top.w === 0) return 'Every weight is at zero — the ranking is arbitrary until you raise one.'
   if (weights.every((w) => w === weights[0])) {
-    return `Evenly weighted — each of the four metrics carries ${weights[0]}% of the score.`
+    return `Evenly weighted — each of the ${weights.length} metrics carries ${weights[0]}% of the score.`
   }
 
   const lead =

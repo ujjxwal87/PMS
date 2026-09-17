@@ -4,13 +4,23 @@ import StrategyPicker from '../components/StrategyPicker.jsx'
 import MetricGuide from '../components/MetricGuide.jsx'
 import FirmMark from '../components/FirmMark.jsx'
 import { useApp } from '../state.jsx'
-import { LENSES, MIN_BANDS, PERIODS, PERIOD_LABEL, STRATEGIES, bandFor, inBand } from '../data/strategies.js'
+import { LENSES, METRIC_LABELS, PERIODS, PERIOD_LABEL } from '../data/lenses.js'
+import { useUniverse } from '../hooks/useUniverse.js'
+import { AUM_BANDS, bandFor, inBand } from '../lib/bands.js'
 import { lensMovers, scoreUniverse } from '../lib/scoring.js'
 import { CUSTOM_LENS, describeWeights } from '../lib/weights.js'
-import { pct, rank2, shortRupees } from '../lib/format.js'
-import { slugify } from '../lib/slug.js'
+import { pct, rank2 } from '../lib/format.js'
 
-const GRID = '44px minmax(208px, 1.9fr) 136px 84px 72px 82px 100px 86px 88px'
+const GRID = '44px minmax(208px, 1.9fr) 136px 84px 72px 88px 78px 104px'
+
+// "2026-08-31" -> "August 2026"
+const monthLabel = (iso) =>
+  iso
+    ? new Date(`${iso}T00:00:00`).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
+    : ''
+
+const crore = (n) =>
+  n === null || n === undefined ? '—' : `₹${Math.round(n).toLocaleString('en-IN')} Cr`
 
 export default function Leaderboard() {
   const navigate = useNavigate()
@@ -20,15 +30,17 @@ export default function Leaderboard() {
     band, setBand,
   } = useApp()
 
+  const { loading, error, asOn, strategies } = useUniverse({ assetClass: 'Equity', minAum: 25 })
+
   const isCustom = lens === CUSTOM_LENS
-  const weightLabels = [PERIOD_LABEL[period], 'Sharpe', 'Upside capture', 'Downside capture']
+  const weightLabels = [PERIOD_LABEL[period], ...METRIC_LABELS]
   const weights = isCustom ? customWeights : LENSES[lens].weights
   const blurb = isCustom ? describeWeights(customWeights, weightLabels) : LENSES[lens].blurb
 
-  const scored = scoreUniverse(weights, period)
-  // Rank the whole universe, then show only the minimum-ticket band asked for.
+  const scored = scoreUniverse(strategies, weights, period)
+  // Rank the whole universe, then show only the size band asked for.
   const ranked = scored.filter((r) => inBand(r, band))
-  const movers = lensMovers(weights, period)
+  const movers = lensMovers(strategies, weights, period, LENSES.Balanced.weights)
   const bandOn = band !== 'any'
   const bandLabel = bandFor(band).label
   const periodShort = period === '1M' ? '1M ret' : period === '1Y' ? '1Y ret' : `${period} CAGR`
@@ -38,10 +50,12 @@ export default function Leaderboard() {
       <div className="main-col">
         <div className="banner-panel" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 28, flexWrap: 'wrap' }}>
           <div className="stack" style={{ gap: 7, minWidth: 320, maxWidth: '62ch' }}>
-            <Eyebrow tone="gold">Composite ranking · 36-month window</Eyebrow>
-            <h2 style={{ fontSize: 30, lineHeight: 1.1 }}>A strategy earns its place on four metrics at once</h2>
+            <Eyebrow tone="gold">
+              {asOn ? `SEBI + APMI filings · ${monthLabel(asOn)}` : 'Composite ranking'}
+            </Eyebrow>
+            <h2 style={{ fontSize: 30, lineHeight: 1.1 }}>A strategy earns its place on three metrics at once</h2>
             <span style={{ fontSize: 15, lineHeight: 1.55, color: 'var(--ink-2)' }}>
-              Return alone flatters leveraged books. Upside and downside capture show what was paid for it — switch the
+              Return alone flatters leveraged books. Sharpe and the worst drawdown show what was paid for it — switch the
               lens and the order changes.
             </span>
           </div>
@@ -57,16 +71,16 @@ export default function Leaderboard() {
           className="row wrap"
           style={{ padding: '12px var(--gutter)', gap: '10px 18px', alignItems: 'center', borderBottom: '1px solid var(--line)' }}
         >
-          <Eyebrow>Minimum investment</Eyebrow>
+          <Eyebrow>Book size</Eyebrow>
           <Segmented
-            items={MIN_BANDS.map((b) => ({ label: b.label, value: b.id }))}
+            items={AUM_BANDS.map((b) => ({ label: b.label, value: b.id }))}
             value={band}
             onChange={setBand}
           />
           <span className="note" style={{ flex: 1, minWidth: 200 }}>
             {bandOn
-              ? `${ranked.length} of ${scored.length} strategies open at ${bandLabel}`
-              : 'SEBI sets a ₹50 lakh floor on any PMS account, so nothing here opens for less.'}
+              ? `${ranked.length} of ${scored.length} strategies manage ${bandLabel}`
+              : 'Assets under management as filed with SEBI for the reported month.'}
           </span>
         </div>
 
@@ -105,7 +119,7 @@ export default function Leaderboard() {
                     onChange={(e) => setCustomWeight(i, Number(e.target.value))}
                   />
                 ) : (
-                  <Meter thin value={w * 2} tone={i === 3 ? 'gold' : undefined} />
+                  <Meter thin value={w * 2} tone={i === 2 ? 'gold' : undefined} />
                 )}
               </div>
             ))}
@@ -113,7 +127,7 @@ export default function Leaderboard() {
 
           {isCustom && (
             <span className="note">
-              The other three adjust as you drag, so the weights always total 100%.
+              The other two adjust as you drag, so the weights always total 100%.
             </span>
           )}
         </div>
@@ -126,21 +140,37 @@ export default function Leaderboard() {
               <div>Score</div>
               <div className="right">{periodShort}</div>
               <div className="right">Sharpe</div>
-              <div className="right">Upside</div>
-              <div className="right">Downside</div>
               <div className="right">Max DD</div>
-              <div className="right" style={{ paddingRight: 16 }}>Minimum</div>
+              <div className="right">Vol</div>
+              <div className="right" style={{ paddingRight: 16 }}>AUM</div>
             </div>
 
-            {ranked.length === 0 && (
+            {loading && (
               <div className="stack" style={{ padding: '32px 16px', gap: 6, alignItems: 'center', textAlign: 'center' }}>
-                <span className="serif" style={{ fontSize: 19, fontWeight: 700 }}>No strategy in this band</span>
-                <span className="note">Try a different minimum, or read the Learn chapter on minimums.</span>
+                <span className="serif" style={{ fontSize: 19, fontWeight: 700 }}>Loading filings…</span>
+                <span className="note">Reading the latest reported month from SEBI and APMI.</span>
               </div>
             )}
+
+            {error && (
+              <div className="stack" style={{ padding: '32px 16px', gap: 6, alignItems: 'center', textAlign: 'center' }}>
+                <span className="serif" style={{ fontSize: 19, fontWeight: 700, color: 'var(--neg)' }}>
+                  Could not reach the filings database
+                </span>
+                <span className="note">{String(error.message || error)}</span>
+              </div>
+            )}
+
+            {!loading && !error && ranked.length === 0 && (
+              <div className="stack" style={{ padding: '32px 16px', gap: 6, alignItems: 'center', textAlign: 'center' }}>
+                <span className="serif" style={{ fontSize: 19, fontWeight: 700 }}>No strategy in this band</span>
+                <span className="note">Try a different book size.</span>
+              </div>
+            )}
+
             {ranked.map((r, i) => (
               <div
-                key={r.name}
+                key={r.id}
                 className={`tbl-row ${i % 2 ? 'tbl-row--alt' : 'tbl-row--plain'}`}
                 style={{ display: 'grid', gridTemplateColumns: GRID }}
               >
@@ -148,9 +178,9 @@ export default function Leaderboard() {
                   {rank2(i)}
                 </div>
                 <div className="row" style={{ padding: '12px 10px', gap: 10, minWidth: 0 }}>
-                  <FirmMark firm={r.firm} size={30} />
+                  <FirmMark firm={r.firm} domain={r.domain} size={30} />
                   <div className="stack" style={{ gap: 2, minWidth: 0 }}>
-                    <Link to={`/strategy/${slugify(r.name)}`} className="row-link truncate">{r.name}</Link>
+                    <Link to={`/strategy/${r.id}`} className="row-link truncate">{r.name}</Link>
                     <span style={{ fontSize: 13.5, color: 'var(--muted)' }}>{r.firm}</span>
                   </div>
                 </div>
@@ -158,14 +188,13 @@ export default function Leaderboard() {
                   <Meter value={((r.score - 55) / 45) * 100} style={{ flex: 1 }} />
                   <span className="num" style={{ fontSize: 15, fontWeight: 700 }}>{r.score.toFixed(1)}</span>
                 </div>
-                <div className="right num">{pct(r.ret)}</div>
-                <div className="right num">{r.sharpe.toFixed(2)}</div>
-                <div className="right num">{r.upside}%</div>
-                <div className="right num" style={{ fontWeight: 700, color: r.downside > 95 ? 'var(--neg)' : 'var(--ink)' }}>
-                  {r.downside}%
+                <div className="right num">{r.ret === null ? '—' : pct(r.ret)}</div>
+                <div className="right num">{r.sharpe === null ? '—' : r.sharpe.toFixed(2)}</div>
+                <div className="right num" style={{ color: 'var(--neg)' }}>
+                  {r.maxDD === null ? '—' : pct(r.maxDD)}
                 </div>
-                <div className="right num" style={{ color: 'var(--neg)' }}>{pct(r.maxDD)}</div>
-                <div className="right num" style={{ paddingRight: 16 }}>{shortRupees(r.minInvestment)}</div>
+                <div className="right num">{r.vol === null ? '—' : pct(r.vol, 0)}</div>
+                <div className="right num" style={{ paddingRight: 16 }}>{crore(r.aum)}</div>
               </div>
             ))}
           </div>
@@ -175,12 +204,12 @@ export default function Leaderboard() {
           style={{ padding: '13px var(--gutter)', background: 'var(--panel)', display: 'flex', justifyContent: 'space-between', gap: 16, fontSize: 13.5, color: 'var(--muted)', flexWrap: 'wrap' }}
         >
           <span>
-            Note: capture ratios against the S&amp;P BSE 500 TRI; excludes strategies with under 36 months of audited
-            history.
+            Sharpe, volatility and drawdown are computed from the monthly returns each manager files with APMI; the
+            regulator publishes none of the three. Excludes strategies with under 24 months of filed history.
           </span>
           <span>
             {ranked.length} of {scored.length} shown · {lens} lens
-            {bandOn && ` · minimum ${bandLabel}`}
+            {bandOn && ` · ${bandLabel}`}
           </span>
         </div>
       </div>
@@ -210,14 +239,16 @@ export default function Leaderboard() {
 
         <RailBlock label="Selected for comparison" style={{ gap: 10 }}>
           {basket.map((b) => {
-            const min = STRATEGIES.find((s) => s.name === b)?.minInvestment
+            // The rail labels a pick from what the basket already carries, so a
+            // strategy picked outside the current filter still reads correctly.
+            const hit = strategies.find((s) => s.id === b.id)
             return (
-              <div key={b} className="basket-row">
+              <div key={b.id} className="basket-row">
                 <span className="stack truncate" style={{ gap: 2 }}>
-                  <span className="truncate">{b}</span>
-                  {min && <span className="note" style={{ fontSize: 12.5 }}>Minimum {shortRupees(min)}</span>}
+                  <span className="truncate">{b.name}</span>
+                  <span className="note" style={{ fontSize: 12.5 }}>{hit ? crore(hit.aum) : b.firm}</span>
                 </span>
-                <button type="button" className="basket-row__drop" aria-label={`Remove ${b}`} onClick={() => dropFromBasket(b)}>
+                <button type="button" className="basket-row__drop" aria-label={`Remove ${b.name}`} onClick={() => dropFromBasket(b.id)}>
                   ×
                 </button>
               </div>

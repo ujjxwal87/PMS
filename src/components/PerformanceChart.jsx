@@ -1,7 +1,11 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 
-// Growth of ₹100, strategy against its benchmark. Two series, so both are named
-// in the legend and labelled at the line end — identity is never colour alone.
+// Growth of ₹100, strategy against its benchmark. Both series are named in the
+// legend and labelled at the line end — identity is never colour alone.
+//
+// The benchmark is optional. Live filings carry no benchmark return series yet,
+// so the chart draws the strategy alone rather than inventing a line to sit
+// next to it.
 
 export const SERIES = {
   strategy: '#009184',
@@ -37,7 +41,8 @@ export default function PerformanceChart({ series, strategyName, benchmarkName, 
   }, [])
 
   const { points, labels } = series
-  const values = points.flatMap((p) => [p.strategy, p.benchmark])
+  const hasBench = Boolean(benchmarkName) && points.some((p) => p.benchmark != null)
+  const values = points.flatMap((p) => (hasBench ? [p.strategy, p.benchmark] : [p.strategy]))
   const ticks = niceTicks(Math.min(...values), Math.max(...values))
   const lo = Math.min(ticks[0], ...values)
   const hi = Math.max(ticks[ticks.length - 1], ...values)
@@ -66,10 +71,12 @@ export default function PerformanceChart({ series, strategyName, benchmarkName, 
           <span className="chart__swatch" style={{ background: SERIES.strategy }} />
           {strategyName}
         </span>
-        <span className="chart__key">
-          <span className="chart__swatch" style={{ background: SERIES.benchmark }} />
-          {benchmarkName}
-        </span>
+        {hasBench && (
+          <span className="chart__key">
+            <span className="chart__swatch" style={{ background: SERIES.benchmark }} />
+            {benchmarkName}
+          </span>
+        )}
         <span className="chart__axis-note">Growth of ₹100</span>
       </div>
 
@@ -77,7 +84,11 @@ export default function PerformanceChart({ series, strategyName, benchmarkName, 
         width={width}
         height={height}
         role="img"
-        aria-label={`${strategyName} against ${benchmarkName}, growth of ₹100 over the window`}
+        aria-label={
+          hasBench
+            ? `${strategyName} against ${benchmarkName}, growth of ₹100 over the window`
+            : `${strategyName}, growth of ₹100 over the window`
+        }
         onPointerMove={onMove}
         onPointerLeave={() => setHover(null)}
         style={{ display: 'block', touchAction: 'pan-y' }}
@@ -99,21 +110,25 @@ export default function PerformanceChart({ series, strategyName, benchmarkName, 
           ) : null,
         )}
 
-        <path d={path('benchmark')} fill="none" stroke={SERIES.benchmark} strokeWidth="2" strokeLinejoin="round" />
+        {hasBench && (
+          <path d={path('benchmark')} fill="none" stroke={SERIES.benchmark} strokeWidth="2" strokeLinejoin="round" />
+        )}
         <path d={path('strategy')} fill="none" stroke={SERIES.strategy} strokeWidth="2" strokeLinejoin="round" />
 
         {/* direct labels, so the lines are readable without the legend */}
         <text x={x(points.length - 1) + 8} y={y(last.strategy) + 4} className="chart__endlabel">
           {Math.round(last.strategy)}
         </text>
-        <text x={x(points.length - 1) + 8} y={y(last.benchmark) + 4} className="chart__endlabel">
-          {Math.round(last.benchmark)}
-        </text>
+        {hasBench && (
+          <text x={x(points.length - 1) + 8} y={y(last.benchmark) + 4} className="chart__endlabel">
+            {Math.round(last.benchmark)}
+          </text>
+        )}
 
         {hover != null && (
           <g>
             <line x1={x(hover)} x2={x(hover)} y1={PAD.top} y2={PAD.top + plotH} stroke="var(--muted-2)" strokeWidth="1" />
-            {['benchmark', 'strategy'].map((key) => (
+            {(hasBench ? ['benchmark', 'strategy'] : ['strategy']).map((key) => (
               <circle
                 key={key}
                 cx={x(hover)}
@@ -141,10 +156,12 @@ export default function PerformanceChart({ series, strategyName, benchmarkName, 
             <span className="chart__swatch" style={{ background: SERIES.strategy }} />
             ₹{points[hover].strategy.toFixed(1)}
           </span>
-          <span className="chart__tip-row">
-            <span className="chart__swatch" style={{ background: SERIES.benchmark }} />
-            ₹{points[hover].benchmark.toFixed(1)}
-          </span>
+          {hasBench && (
+            <span className="chart__tip-row">
+              <span className="chart__swatch" style={{ background: SERIES.benchmark }} />
+              ₹{points[hover].benchmark.toFixed(1)}
+            </span>
+          )}
         </div>
       )}
     </div>

@@ -1,80 +1,129 @@
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { Btn, Eyebrow, KV, Meter, RailBlock, SectionHead, Segmented, Stat } from '../components/ui.jsx'
+import { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { Eyebrow, KV, RailBlock, SectionHead, Segmented, Stat } from '../components/ui.jsx'
 import FirmMark from '../components/FirmMark.jsx'
 import PerformanceChart from '../components/PerformanceChart.jsx'
-import { useApp } from '../state.jsx'
-import { PERIODS, PERIOD_LABEL, STRATEGIES } from '../data/strategies.js'
-import { BENCHMARK } from '../data/holdings-pool.js'
-import { MANAGERS, detailFor } from '../data/strategy-detail.js'
-import { bookFor } from '../lib/portfolio.js'
-import { growthSeries } from '../lib/series.js'
-import { slugify } from '../lib/slug.js'
-import { crores, pct, shortRupees } from '../lib/format.js'
+import { loadPeers, loadSebiDetail, loadSeries, loadStrategy } from '../lib/universe.js'
+import { growthFromMonthly, WINDOW_MONTHS } from '../lib/growth.js'
+import { pct } from '../lib/format.js'
+
+const PERIODS = ['1M', '1Y', '3Y', '5Y']
+const CHART_PERIODS = Object.keys(WINDOW_MONTHS)
+
+const crore = (n) => (n === null || n === undefined ? '—' : `₹${Math.round(n).toLocaleString('en-IN')} Cr`)
+const maybePct = (n, dp = 1) => (n === null || n === undefined ? '—' : pct(n, dp))
+const dp2 = (n) => (n === null || n === undefined ? '—' : n.toFixed(2))
+
+const monthLabel = (iso) =>
+  iso ? new Date(`${iso}T00:00:00`).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : '—'
 
 export default function StrategyDetail() {
-  const { slug } = useParams()
-  const navigate = useNavigate()
-  const { period, setPeriod, basket, addToBasket, setPick } = useApp()
+  const { id } = useParams()
+  const [state, setState] = useState({ loading: true, error: null, s: null, rows: [], sebi: null, peers: [] })
+  const [chartPeriod, setChartPeriod] = useState('3Y')
 
-  const index = STRATEGIES.findIndex((s) => slugify(s.name) === slug)
-  if (index === -1) return <Navigate to="/leaderboard" replace />
+  useEffect(() => {
+    let live = true
+    setState({ loading: true, error: null, s: null, rows: [], sebi: null, peers: [] })
 
-  const s = STRATEGIES[index]
-  const d = detailFor(s.name)
-  const manager = MANAGERS[s.firm]
-  const book = bookFor(s)
-  const series = growthSeries(s, period, index)
-  const inBasket = basket.includes(s.name)
+    loadStrategy(id)
+      .then(async (s) => {
+        if (!s) return { loading: false, error: null, s: null, rows: [], sebi: null, peers: [] }
+        // The three follow-ups are independent, so they go together rather than
+        // in series — and a missing SEBI row or peer set must not lose the page.
+        const [rows, sebi, peers] = await Promise.all([
+          loadSeries(s.id).catch(() => []),
+          loadSebiDetail(s.id).catch(() => null),
+          loadPeers(s).catch(() => []),
+        ])
+        return { loading: false, error: null, s, rows, sebi, peers }
+      })
+      .then((next) => { if (live) setState(next) })
+      .catch((err) => { if (live) setState({ loading: false, error: err, s: null, rows: [], sebi: null, peers: [] }) })
 
-  const peers = STRATEGIES.filter((p) => p.name !== s.name)
-    .map((p) => ({ p, gap: Math.abs(p.cagr - s.cagr) + Math.abs(p.downside - s.downside) / 10 }))
-    .sort((a, b) => a.gap - b.gap)
-    .slice(0, 3)
-    .map((x) => x.p)
+    return () => { live = false }
+  }, [id])
 
-  const lead = series.endStrategy - series.endBenchmark
+  const { loading, error, s, rows, sebi, peers } = state
+
+  if (loading) {
+    return (
+      <div className="pad stack" style={{ gap: 8, padding: '60px var(--gutter)', alignItems: 'center' }}>
+        <span className="serif" style={{ fontSize: 19, fontWeight: 700 }}>Loading filings…</span>
+      </div>
+    )
+  }
+
+  if (error || !s) {
+    return (
+      <div className="pad stack" style={{ gap: 10, padding: '60px var(--gutter)', alignItems: 'center', textAlign: 'center' }}>
+        <span className="serif" style={{ fontSize: 21.5, fontWeight: 700 }}>
+          {error ? 'Could not load this strategy' : 'No filing for this strategy'}
+        </span>
+        <span className="note" style={{ maxWidth: '48ch' }}>
+          {error
+            ? String(error.message || error)
+            : 'It did not report in the most recent month, or the id is not one we hold.'}
+        </span>
+        <Link className="linkish" to="/leaderboard">Back to the leaderboard →</Link>
+      </div>
+    )
+  }
+
+  const series = growthFromMonthly(rows, chartPeriod)
+  // The benchmark's own windows come from SEBI, which lags APMI by a month, so
+  // the comparison is dated separately rather than implied to be same-month.
+  const hasBench = Boolean(s.benchmark) && s.excess && s.excess['3Y'] !== null
 
   return (
     <div className="body-grid--fixed">
       <div className="main-col">
         <div className="banner-dark" style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-          <FirmMark firm={s.firm} size={62} tone="dark" />
+          <FirmMark firm={s.firm} domain={s.domain} size={62} tone="dark" />
           <div className="stack" style={{ flex: 1, minWidth: 280, gap: 7 }}>
             <Eyebrow tone="on-dark">
-              {s.firm} · {d.category} · {d.status}
+              {s.firm}
+              {s.assetClass ? ` · ${s.assetClass}` : ''}
+              {s.serviceType === 'D' ? ' · Discretionary' : s.serviceType === 'N' ? ' · Non-discretionary' : ''}
             </Eyebrow>
             <h2 style={{ fontSize: 33, lineHeight: 1.06 }}>{s.name}</h2>
             <span style={{ fontSize: 15, color: 'var(--on-dark-2)', maxWidth: '68ch', lineHeight: 1.5 }}>
-              {d.objective}
+              {s.benchmark ? `Benchmarked to ${s.benchmark}. ` : ''}
+              {s.months} months of returns filed with APMI, to {monthLabel(s.asOn)}.
+              {s.trackBreak ? ' Its strategy or benchmark was re-tagged during this period, which breaks comparability with the earlier record.' : ''}
             </span>
           </div>
           <div className="row wrap" style={{ gap: 24 }}>
-            <Stat dark label="5-yr CAGR" value={pct(s.cagr)} />
-            <Stat dark label="Sharpe" value={s.sharpe.toFixed(2)} />
-            <Stat dark label="AUM" value={crores(s.aum)} />
-            <Stat dark label="Minimum" value={shortRupees(s.minInvestment)} />
+            <Stat dark label="3-yr CAGR" value={maybePct(s.returns['3Y'])} />
+            <Stat dark label="Sharpe" value={dp2(s.sharpe)} />
+            <Stat dark label="AUM" value={crore(s.aum)} />
+            <Stat dark label="Max DD" value={maybePct(s.maxDD)} />
           </div>
         </div>
 
         <SectionHead
-          title={`Growth of ₹100 · ${PERIOD_LABEL[period]}`}
-          right={<Segmented items={PERIODS} value={period} onChange={setPeriod} />}
+          title="Growth of ₹100"
+          right={<Segmented items={CHART_PERIODS} value={chartPeriod} onChange={setChartPeriod} />}
         />
 
         <div style={{ padding: '0 var(--gutter) 8px' }}>
-          <PerformanceChart
-            series={series}
-            strategyName={s.name}
-            benchmarkName={BENCHMARK}
-            height={310}
-          />
-          <p className="card__body" style={{ paddingTop: 10, maxWidth: '80ch' }}>
-            ₹100 became <b>₹{series.endStrategy.toFixed(0)}</b> against <b>₹{series.endBenchmark.toFixed(0)}</b> in the
-            benchmark — {lead >= 0 ? 'ahead by' : 'behind by'} ₹{Math.abs(lead).toFixed(0)} over the window.
-          </p>
+          {series ? (
+            <>
+              <PerformanceChart series={series} strategyName={s.name} benchmarkName={null} height={310} />
+              <p className="card__body" style={{ paddingTop: 10, maxWidth: '80ch' }}>
+                ₹100 became <b>₹{series.endStrategy.toFixed(0)}</b> over {series.months} months
+                {series.short ? ' — the whole record, which is shorter than this window' : ''}, compounded from the
+                monthly returns as filed. No benchmark line: SEBI publishes the benchmark's name but its return series
+                is not yet ingested.
+              </p>
+            </>
+          ) : (
+            <p className="card__body" style={{ maxWidth: '72ch' }}>
+              Not enough filed history to draw this window.
+            </p>
+          )}
         </div>
 
-        {/* the same numbers as text, for anyone who cannot read the lines */}
         <div style={{ padding: '8px var(--gutter) 22px' }}>
           <div className="tbl-scroll">
             <div style={{ minWidth: 460 }}>
@@ -84,42 +133,62 @@ export default function StrategyDetail() {
                   <div key={p} className="right">{p}</div>
                 ))}
               </div>
-              {[
-                ['This strategy', (p, i) => pct(growthSeries(s, p, index).strategyReturn)],
-                [BENCHMARK, (p) => pct(growthSeries(s, p, index).benchmarkReturn)],
-              ].map(([label, get], ri) => (
-                <div
-                  key={label}
-                  className={`tbl-row ${ri % 2 ? 'tbl-row--alt' : 'tbl-row--plain'}`}
-                  style={{ display: 'grid', gridTemplateColumns: '1fr repeat(4, 92px)' }}
-                >
-                  <div style={{ padding: '11px 14px', fontWeight: 700 }}>{label}</div>
-                  {PERIODS.map((p) => (
-                    <div key={p} className="right num" style={{ padding: '11px 8px' }}>{get(p)}</div>
-                  ))}
-                </div>
-              ))}
+              <div className="tbl-row tbl-row--plain" style={{ display: 'grid', gridTemplateColumns: '1fr repeat(4, 92px)' }}>
+                <div style={{ padding: '11px 14px', fontWeight: 700 }}>This strategy</div>
+                {PERIODS.map((p) => (
+                  <div key={p} className="right num" style={{ padding: '11px 8px' }}>
+                    {maybePct(s.returns[p])}
+                  </div>
+                ))}
+              </div>
+              {hasBench && (
+                <>
+                  <div className="tbl-row tbl-row--alt" style={{ display: 'grid', gridTemplateColumns: '1fr repeat(4, 92px)' }}>
+                    <div style={{ padding: '11px 14px', fontWeight: 700 }}>{s.benchmark}</div>
+                    {PERIODS.map((p) => (
+                      <div key={p} className="right num" style={{ padding: '11px 8px' }}>
+                        {maybePct(s.benchReturns[p])}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="tbl-row tbl-row--plain" style={{ display: 'grid', gridTemplateColumns: '1fr repeat(4, 92px)' }}>
+                    <div style={{ padding: '11px 14px', fontWeight: 700 }}>Difference</div>
+                    {PERIODS.map((p) => {
+                      const d = s.excess[p]
+                      return (
+                        <div
+                          key={p}
+                          className="right num"
+                          style={{ padding: '11px 8px', fontWeight: 700,
+                                   color: d === null ? 'var(--ink)' : d >= 0 ? 'var(--accent)' : 'var(--neg)' }}
+                        >
+                          {d === null ? '—' : `${d > 0 ? '+' : ''}${d.toFixed(1)}`}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <span className="note" style={{ display: 'block', paddingTop: 8 }}>
-            1M and 1Y are period returns; 3Y and 5Y are annualised. Net of fees, against the {BENCHMARK}.
+            1M is the month's return; 1Y and longer are annualised. Strategy figures as filed with APMI for{' '}
+            {monthLabel(s.asOn)}; a blank means no history for that window, never zero.
+            {hasBench ? ` Benchmark figures are as filed with SEBI for ${monthLabel(s.benchAsOn)}, so the two rows are a month apart.` : ''}
           </span>
         </div>
 
         <SectionHead title="The numbers behind the ranking" />
-        <div
-          className="metric-grid"
-          style={{ margin: '0 var(--gutter) 24px' }}
-        >
+        <div className="metric-grid" style={{ margin: '0 var(--gutter) 24px' }}>
           {[
-            ['Upside capture', `${s.upside}%`, 'of the benchmark’s rise'],
-            ['Downside capture', `${s.downside}%`, 'of its fall'],
-            ['Max drawdown', pct(s.maxDD), 'worst peak to trough'],
-            ['Holdings', String(s.holdings), `top five ${book.topFive.toFixed(0)}%`],
-            ['Turnover', d.turnover, 'of the book, annually'],
-            ['Fee', d.fee, 'plus GST at 18%'],
-            ['Exit load', d.exitLoad, 'on early redemption'],
-            ['Inception', d.inception, `benchmark ${BENCHMARK}`],
+            ['Sharpe, 36-mo', dp2(s.sharpe), 'excess return per unit of risk'],
+            ['Volatility', maybePct(s.vol, 0), 'annualised, from monthly returns'],
+            ['Max drawdown', maybePct(s.maxDD), 'worst peak to trough on record'],
+            ['Filed history', `${s.months} mo`, 'monthly returns available'],
+            ['Portfolio turnover', maybePct(sebi?.turnover1y, 0), sebi ? `12 months to ${monthLabel(sebi.asOn)}` : 'not filed'],
+            ['Net flow', crore(sebi?.netFlow), sebi ? `month of ${monthLabel(sebi.asOn)}` : 'not filed'],
+            ['Net flow, FY to date', crore(sebi?.netFlowFytd), sebi ? `to ${monthLabel(sebi.asOn)}` : 'not filed'],
+            ['Inception', s.inception ? monthLabel(s.inception) : '—', 'as recorded'],
           ].map(([label, value, note]) => (
             <div key={label} className="stack metric-grid__cell" style={{ gap: 4 }}>
               <Eyebrow>{label}</Eyebrow>
@@ -129,88 +198,36 @@ export default function StrategyDetail() {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 0, borderTop: '1px solid var(--line)' }}>
-          <div className="stack" style={{ padding: '20px var(--gutter)', gap: 12, borderRight: '1px solid var(--line)' }}>
-            <Eyebrow>Top ten holdings</Eyebrow>
-            {book.holdings.slice(0, 10).map((h) => (
-              <div key={h.name} className="stack" style={{ gap: 4 }}>
-                <div className="row" style={{ justifyContent: 'space-between', gap: 12, fontSize: 14.5 }}>
-                  <span className="truncate">
-                    {h.name} <span className="note">· {h.sector}</span>
-                  </span>
-                  <b className="num">{h.weight.toFixed(1)}%</b>
-                </div>
-                <Meter value={(h.weight / book.holdings[0].weight) * 100} />
-              </div>
-            ))}
-            <span className="note">Ten of {s.holdings} names · {book.cash.toFixed(1)}% in cash</span>
-          </div>
-
-          <div className="stack" style={{ padding: '20px var(--gutter)', gap: 12 }}>
-            <Eyebrow>Sector exposure</Eyebrow>
-            {book.sectorRows.map((r) => (
-              <div key={r.name} className="stack" style={{ gap: 4 }}>
-                <div className="row" style={{ justifyContent: 'space-between', gap: 12, fontSize: 14.5 }}>
-                  <span className="truncate">{r.name}</span>
-                  <b className="num">{r.weight.toFixed(1)}%</b>
-                </div>
-                <Meter value={(r.weight / book.sectorRows[0].weight) * 100} />
-              </div>
-            ))}
-            <span className="note">Weights as at 31 Aug 2026 · sums to 100% with cash</span>
-          </div>
-        </div>
-
         <div className="stack" style={{ padding: '20px var(--gutter) 26px', gap: 10, borderTop: '1px solid var(--line)', background: 'var(--panel)' }}>
-          <Eyebrow>Who runs it</Eyebrow>
-          <div className="row wrap" style={{ gap: 16, alignItems: 'flex-start' }}>
-            <FirmMark firm={s.firm} size={46} />
-            <div className="stack" style={{ flex: 1, minWidth: 260, gap: 6 }}>
-              <span className="serif" style={{ fontSize: 21, fontWeight: 700 }}>{manager.name}</span>
-              <span className="note">{manager.role} · {s.firm}</span>
-              <p className="card__body" style={{ maxWidth: '72ch' }}>{manager.note}</p>
-              <Link className="linkish" to={`/managers/${slugify(s.firm)}`}>
-                Read the manager profile →
-              </Link>
-            </div>
-          </div>
+          <Eyebrow>What is not here</Eyebrow>
+          <p className="card__body" style={{ maxWidth: '76ch' }}>
+            Holdings, sector weights, fees, exit load and the minimum ticket are not published by SEBI or APMI at any
+            frequency. They were shown on this page when it ran on sample data; they are gone rather than guessed. Ask
+            the manager for the disclosure document and factsheet directly.
+          </p>
         </div>
       </div>
 
       <aside className="rail">
-        <RailBlock label="Open an account" style={{ gap: 10 }}>
-          <KV label="Minimum" value={shortRupees(s.minInvestment)} />
-          <KV label="Fee" value={d.fee} />
-          <KV label="Status" value={d.status} lined={false} />
-          <Btn
-            block
-            onClick={() => {
-              setPick(s.name)
-              navigate('/invest')
-            }}
-          >
-            Invest in this strategy
-          </Btn>
-          <Btn block variant="ghost" onClick={() => (inBasket ? navigate('/compare') : addToBasket(s.name))}>
-            {inBasket ? 'In your comparison — view' : 'Add to comparison'}
-          </Btn>
-        </RailBlock>
-
-        <RailBlock label="Documents" style={{ gap: 11 }}>
-          <span style={{ fontSize: 14.5, fontWeight: 700 }}>Disclosure document</span>
-          <span className="note" style={{ marginTop: -8 }}>PDF · dated 1 Jul 2026</span>
-          <span style={{ fontSize: 14.5, fontWeight: 700 }}>Monthly factsheet</span>
-          <span className="note" style={{ marginTop: -8 }}>PDF · Aug 2026</span>
-          <span style={{ fontSize: 14.5, fontWeight: 700 }}>Fee schedule and hurdle</span>
-          <span className="note" style={{ marginTop: -8 }}>PDF · dated 1 Jul 2026</span>
+        <RailBlock label="Where these numbers come from" style={{ gap: 10 }}>
+          <KV label="Returns, AUM" value={`APMI · ${monthLabel(s.asOn)}`} />
+          <KV label="Flows, turnover" value={sebi ? `SEBI · ${monthLabel(sebi.asOn)}` : 'SEBI · not filed'} />
+          <KV label="Registration" value={s.regNo || '—'} lined={false} />
+          <Link className="linkish" to={`/managers/${s.managerId}`}>
+            The firm's profile →
+          </Link>
+          <span className="note">
+            Sharpe, volatility and drawdown are computed from the filed monthly series, not published by either source.
+          </span>
         </RailBlock>
 
         <RailBlock label="Closest on the numbers" style={{ gap: 11 }}>
+          {peers.length === 0 && <span className="note">No peer within three points of this record.</span>}
           {peers.map((p) => (
-            <Link key={p.name} to={`/strategy/${slugify(p.name)}`} className="stack" style={{ gap: 2 }}>
+            <Link key={p.id} to={`/strategy/${p.id}`} className="stack" style={{ gap: 2 }}>
               <span style={{ fontSize: 14.5, fontWeight: 700, lineHeight: 1.3 }}>{p.name}</span>
               <span className="note">
-                {p.firm} · {pct(p.cagr)} · downside {p.downside}%
+                {p.firm} · 3Y {maybePct(p.returns['3Y'])} · Sharpe {dp2(p.sharpe)}
               </span>
             </Link>
           ))}
