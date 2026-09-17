@@ -271,6 +271,52 @@ def apply_tagging(conn, approach_id, as_on, *, asset_class=None,
 
 # ----------------------------------------------------------------- facts
 
+_SCALE_CACHE = {}
+
+
+def column_scales(conn, table):
+    """{column: numeric scale} for one table, cached.
+
+    Money columns are numeric(16,2) and returns numeric(9,4), so Postgres
+    rounds on write: the parser's 706.24244 comes back as 706.24. Comparing the
+    stored value against the freshly parsed one at full precision therefore
+    reports a revision on every single money column of every re-run -- 4,942 of
+    them across one month -- when nothing has actually been restated. Read the
+    real scale rather than hardcoding it, so a column type change cannot
+    silently reintroduce this.
+    """
+    if table not in _SCALE_CACHE:
+        rows = conn.execute(
+            """select column_name, numeric_scale from information_schema.columns
+               where table_schema='pms' and table_name=%s and numeric_scale is not null""",
+            (table,)).fetchall()
+        _SCALE_CACHE[table] = {r["column_name"]: r["numeric_scale"] for r in rows}
+    return _SCALE_CACHE[table]
+
+
+def _same(o, n, scale=None):
+    """True when a stored value and a freshly parsed one are the same fact.
+
+    Postgres hands a `numeric` back as Decimal, which is NOT an instance of
+    int or float -- so an isinstance(o, (int, float)) cast silently never
+    fires, and every numeric column then compares Decimal against float and
+    reports a revision on identical data. That logged 138 phantom revisions
+    for a single manager re-run, and would have written ~90k of them across a
+    full month. Compare numerically, not by type or by repr.
+    """
+    if o is None or n is None:
+        return o is None and n is None
+    if isinstance(o, bool) or isinstance(n, bool):
+        return bool(o) == bool(n)
+    try:
+        a, b = float(o), float(n)
+        if scale is not None:
+            # Compare at the precision the column can actually hold.
+            return round(a, scale) == round(b, scale)
+        return abs(a - b) < 1e-9
+    except (TypeError, ValueError):
+        return o == n
+
 def upsert_apmi(conn, as_on, rows_by_approach, run_id):
     """rows_by_approach: {approach_id: {col: value}}. Logs every changed value to
     fact_revision -- a source silently restating an old month leaves a trail."""
@@ -282,6 +328,7 @@ def upsert_apmi(conn, as_on, rows_by_approach, run_id):
             from apmi_performance where as_on=%s and approach_id = any(%s)""",
         (as_on, aids)).fetchall()}
 
+    scales = column_scales(conn, "apmi_performance")
     revisions, inserted, changed = [], 0, 0
     for aid, vals in rows_by_approach.items():
         old = existing.get(aid)
@@ -293,7 +340,7 @@ def upsert_apmi(conn, as_on, rows_by_approach, run_id):
             o = old[col]
             n = vals.get(col)
             o = float(o) if o is not None else None
-            if (o is None) != (n is None) or (o is not None and abs(o - n) > 1e-9):
+            if not _same(o, n, scales.get(col)):
                 revisions.append((("apmi_performance"), as_on, aid, col,
                                   None if o is None else str(o),
                                   None if n is None else str(n),
@@ -370,18 +417,44 @@ SEBI_APPR_COLS = (
 )
 
 
+def better_display_name(current, candidate):
+    """Which of two spellings of the same firm to show.
+
+    SEBI files in block capitals and often abbreviates ("ENAM ASSET MANAGEMENT
+    CO.PVT.LTD"); APMI files mixed case and in full ("Enam Asset Management
+    Company Private Limited"). Both are correct, one is readable. Before the
+    cross-source merge these lived on separate manager rows and never met;
+    afterwards, a plain last-writer-wins update let SEBI shout over 190 of 556
+    firm names. Mixed case wins; between two of the same kind, the fuller one.
+    """
+    if not candidate:
+        return current
+    if not current:
+        return candidate
+    def shouty(x):
+        letters = [c for c in x if c.isalpha()]
+        return bool(letters) and all(c.isupper() for c in letters)
+    cur_shouty, cand_shouty = shouty(current), shouty(candidate)
+    if cur_shouty != cand_shouty:
+        return current if cand_shouty else candidate
+    return candidate if len(candidate) > len(current) else current
+
+
 def resolve_manager_by_regno(conn, reg_no, name, as_on):
     """SEBI gives us the registration number directly -- no fuzzy matching
     needed, unlike APMI. This is the authoritative identity; APMI names get
-    matched TO this later via the crosswalk, not the other way round."""
+    matched TO this later via the crosswalk, not the other way round.
+
+    The registration number is authoritative; the NAME SPELLING is not -- see
+    better_display_name."""
     row = conn.execute(
-        "select manager_id from manager where sebi_reg_no=%s", (reg_no,)).fetchone()
+        "select manager_id, name from manager where sebi_reg_no=%s", (reg_no,)).fetchone()
     if row:
         mid = row["manager_id"]
         conn.execute(
             """update manager set name=%s, first_seen=least(first_seen,%s),
                    last_seen=greatest(last_seen,%s) where manager_id=%s""",
-            (name, as_on, as_on, mid))
+            (better_display_name(row["name"], name), as_on, as_on, mid))
     else:
         mid = conn.execute(
             """insert into manager (sebi_reg_no, name, first_seen, last_seen)
@@ -402,10 +475,10 @@ def upsert_sebi_manager_monthly(conn, as_on, manager_id, vals, run_id):
             where as_on=%s and manager_id=%s""", (as_on, manager_id)).fetchone()
     revisions = []
     if old:
+        scales = column_scales(conn, "sebi_manager_monthly")
         for col in SEBI_MGR_COLS:
             o, n = old[col], vals.get(col)
-            o_cmp = float(o) if isinstance(o, (int, float)) else o
-            if o_cmp != n:
+            if not _same(o, n, scales.get(col)):
                 revisions.append(("sebi_manager_monthly", as_on, manager_id, col,
                                   None if o is None else str(o), None if n is None else str(n),
                                   old["run_id"], run_id))
@@ -435,6 +508,7 @@ def upsert_sebi_approach_monthly(conn, as_on, rows_by_approach, run_id):
         f"""select approach_id, {', '.join(SEBI_APPR_COLS)}, run_id
             from sebi_approach_monthly where as_on=%s and approach_id = any(%s)""",
         (as_on, aids)).fetchall()}
+    scales = column_scales(conn, "sebi_approach_monthly")
     revisions, inserted, changed = [], 0, 0
     for aid, vals in rows_by_approach.items():
         old = existing.get(aid)
@@ -444,8 +518,7 @@ def upsert_sebi_approach_monthly(conn, as_on, rows_by_approach, run_id):
         diff = False
         for col in SEBI_APPR_COLS:
             o, n = old[col], vals.get(col)
-            o_cmp = float(o) if isinstance(o, (int, float)) and not isinstance(o, bool) else o
-            if o_cmp != n:
+            if not _same(o, n, scales.get(col)):
                 revisions.append(("sebi_approach_monthly", as_on, aid, col,
                                   None if o is None else str(o), None if n is None else str(n),
                                   old["run_id"], run_id))
@@ -469,3 +542,47 @@ def upsert_sebi_approach_monthly(conn, as_on, rows_by_approach, run_id):
                        old_value, new_value, old_run_id, new_run_id)
                    values (%s,%s,%s,%s,%s,%s,%s,%s)""", revisions)
     return inserted, changed
+
+
+BENCHMARK_COLS = ("ret_1m", "ret_3m", "ret_6m", "ret_1y",
+                  "ret_2y", "ret_3y", "ret_4y", "ret_5y")
+
+
+def upsert_benchmark_returns(conn, as_on, rows, run_id, source="sebi"):
+    """Write one month of index-level returns.
+
+    An index appears in every filing that benchmarks against it, so the same
+    (month, index) arrives hundreds of times. FIRST WRITER WINS, and a later
+    filing only fills windows the first left null -- it never overwrites a
+    value. Two managers quoting different numbers for the same index in the
+    same month is a discrepancy to look at, not something to average away, and
+    the parser already records it on the filing.
+
+    ret_si is never written: for a benchmark SEBI computes it from the
+    APPROACH's inception, so it is not a property of the index.
+    """
+    written = 0
+    for b in rows:
+        if all(getattr(b, c) is None for c in BENCHMARK_COLS):
+            continue          # nothing but blanks; not worth a row
+        cols = ", ".join(BENCHMARK_COLS)
+        setters = ", ".join(
+            f"{c} = coalesce(benchmark_return.{c}, excluded.{c})" for c in BENCHMARK_COLS)
+        conn.execute(
+            f"""insert into benchmark_return
+                    (as_on, benchmark_norm, benchmark_raw, source, {cols}, run_id)
+                values (%s,%s,%s,%s,{','.join(['%s'] * len(BENCHMARK_COLS))},%s)
+                on conflict (as_on, benchmark_norm, source) do update set {setters}""",
+            (as_on, b.benchmark_norm, b.benchmark_raw, source,
+             *[getattr(b, c) for c in BENCHMARK_COLS], run_id),
+        )
+        written += 1
+    return written
+
+
+def refresh_views(conn):
+    """Rebuild the materialized leaderboard. MUST run after any backfill: until
+    it does, the site still serves the previous month. CONCURRENTLY so readers
+    are never blocked -- it needs the unique index on approach_id, and it cannot
+    run inside a transaction block, hence autocommit at the call site."""
+    conn.execute("refresh materialized view concurrently public.v_strategy")

@@ -11,6 +11,7 @@ from .apmi import (ParseAssertionError, fetch_slice, find_duplicates,
                    months_available, month_end)
 from .fetch import PoliteSession
 from . import sebi as sebi_mod
+from . import reconcile as rec
 
 log = logging.getLogger("pms_ingest")
 
@@ -184,12 +185,15 @@ def load_sebi_filing(conn, session, pmr_id, reg_no, as_on, run_id):
                          benchmark=bench_raw, benchmark_norm=bench_norm, run_id=run_id)
 
     inserted, changed = db.upsert_sebi_approach_monthly(conn, as_on, facts, run_id)
+    benches = db.upsert_benchmark_returns(conn, as_on, filing.benchmark_return, run_id)
 
     status = "partial" if filing.approach_set_mismatch else "ok"
     db.finish_run(conn, run_id, status=status, rows_parsed=len(by_norm), rows_changed=changed,
                   raw_path=str(path), raw_sha256=sha,
                   assertions={"bytes": nbytes, "approaches": len(by_norm),
                              "mgr_changed": mgr_changed, "inserted": inserted,
+                             "benchmarks": benches,
+                             "benchmark_conflicts": filing.benchmark_conflicts or None,
                              "approach_set_mismatch": filing.approach_set_mismatch or None})
     return len(by_norm), inserted, changed, False
 
@@ -265,6 +269,51 @@ def cmd_backfill_sebi(args):
           f"{tot_nofile} no-filing slices")
 
 
+def cmd_reconcile(args):
+    """Weld the APMI and SEBI halves together. Dry run unless --apply."""
+    with db.connect() as conn:
+        rec.ensure_schema(conn)
+        conn.commit()
+        thr = args.min_score if args.min_score is not None else rec.threshold(conn)
+        print(f"matching on normalised firm name, threshold {thr:.4f}")
+        matches, ambiguous, unmatched = rec.match_managers(conn, thr)
+
+        exact = [m for m in matches if m[5] == "exact"]
+        fuzzy = [m for m in matches if m[5] == "fuzzy"]
+        print(f"\n  {len(matches)} matches ({len(exact)} exact, {len(fuzzy)} fuzzy)")
+        print(f"  {len(ambiguous)} ambiguous (parked, never merged)")
+        print(f"  {len(unmatched)} APMI managers with no SEBI counterpart")
+
+        if fuzzy:
+            print("\n  fuzzy matches -- check these before applying:")
+            for aid, aname, sid, sname, score, _ in sorted(fuzzy, key=lambda m: m[4])[:15]:
+                print(f"    {score:.4f}  {aname[:38]:38s} -> {sname[:38]}")
+        if ambiguous:
+            print("\n  ambiguous, needing a human:")
+            for aid, aname, cands, score in ambiguous[:10]:
+                print(f"    {aname[:38]:38s} -> {len(cands)} candidates: {', '.join(c[:28] for c in cands[:3])}")
+
+        if not args.apply:
+            print("\ndry run -- nothing written. Re-run with --apply to merge.")
+            return
+
+        merged, moved = rec.apply_matches(conn, matches)
+        conn.commit()
+        print(f"\nmerged {len(matches)} managers, "
+              f"{merged} approaches welded, {moved} approaches reparented")
+        print("now run: python -m pms_ingest.cli refresh-views")
+
+
+def cmd_refresh_views(args):
+    """The leaderboard is a materialized view; a backfill does not update it."""
+    import psycopg
+    with psycopg.connect(config.require_database_url(), connect_timeout=60,
+                         autocommit=True) as conn:
+        print("refreshing public.v_strategy ...")
+        db.refresh_views(conn)
+    print("done")
+
+
 def cmd_status(args):
     with db.connect() as conn:
         for q, label in [
@@ -305,6 +354,18 @@ def main(argv=None):
                          "(faster, but can silently omit managers that never loaded "
                          "successfully -- see cmd_backfill_sebi)")
     sb.set_defaults(func=cmd_backfill_sebi)
+
+    rc = sub.add_parser("reconcile",
+                        help="match APMI managers to SEBI managers and merge them")
+    rc.add_argument("--apply", action="store_true",
+                    help="actually merge; without it this is a dry run")
+    rc.add_argument("--min-score", type=float,
+                    help="override publish_rule.xsource_match_min")
+    rc.set_defaults(func=cmd_reconcile)
+
+    r = sub.add_parser("refresh-views",
+                       help="rebuild the materialized leaderboard (run after any backfill)")
+    r.set_defaults(func=cmd_refresh_views)
 
     s = sub.add_parser("status", help="what is loaded")
     s.set_defaults(func=cmd_status)

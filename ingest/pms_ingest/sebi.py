@@ -57,6 +57,9 @@ ASSET_CLASS_MAP = {
 RETURN_FIELDS = ("ret_1m", "ret_3m", "ret_6m", "ret_1y", "ret_2y",
                  "ret_3y", "ret_4y", "ret_5y", "ret_si")
 
+# The index-level windows. ret_si is approach-specific for a benchmark too.
+BENCHMARK_FIELDS = RETURN_FIELDS[:-1]
+
 SERVICE_ROW_TO_COL = {
     "Discretionary": "aum_cr_discretionary",
     "Non-Discretionary": "aum_cr_non_discretionary",
@@ -108,6 +111,28 @@ class ApproachReturn:
     ret_4y: float | None = None
     ret_5y: float | None = None
     ret_si: float | None = None
+
+
+@dataclass
+class BenchmarkReturn:
+    """An index's own return for the fixed windows.
+
+    ret_si is deliberately ABSENT. SEBI computes the benchmark's
+    since-inception figure from the APPROACH's inception date, so the same
+    index carries a different ret_si on every approach it benchmarks -- it is
+    an approach-level number wearing an index's name, and storing it as part
+    of an index series would be wrong.
+    """
+    benchmark_raw: str
+    benchmark_norm: str
+    ret_1m: float | None = None
+    ret_3m: float | None = None
+    ret_6m: float | None = None
+    ret_1y: float | None = None
+    ret_2y: float | None = None
+    ret_3y: float | None = None
+    ret_4y: float | None = None
+    ret_5y: float | None = None
 
 
 @dataclass
@@ -168,6 +193,13 @@ class SebiFiling:
     approach_flow: list = field(default_factory=list)
     approach_return: list = field(default_factory=list)
     approach_turnover: list = field(default_factory=list)
+    # One entry per distinct benchmark named in this filing. Populated from the
+    # benchmark rows that already sit beside every approach and were, until
+    # now, parsed only to tell SEBI's 0-as-null apart from a real zero.
+    benchmark_return: list = field(default_factory=list)
+    # Windows where two approaches disagreed on the same index's return in the
+    # same month. Recorded, not averaged: a real disagreement is a parse alarm.
+    benchmark_conflicts: dict = field(default_factory=dict)
 
 
 _SENTINEL_IA = {"0", "", "NA"}
@@ -363,10 +395,33 @@ def _parse_turnover_summary(table, filing, ctx):
             setattr(filing, attr, conv(raw))
 
 
+def _collect_benchmark(out, conflicts, bench_name, bench_vals, ctx):
+    """Fold one benchmark row into the filing's index-level series."""
+    norm = norm_benchmark(bench_name)
+    if not norm:
+        return
+    vals = dict(zip(BENCHMARK_FIELDS, bench_vals[:len(BENCHMARK_FIELDS)]))
+    # SEBI's 0-as-null applies to the index too: an index does not return
+    # exactly 0.0000 over a window, so a flat zero means "no history here".
+    vals = {k: (None if v == 0.0 else v) for k, v in vals.items()}
+
+    prev = out.get(norm)
+    if prev is None:
+        out[norm] = BenchmarkReturn(benchmark_raw=bench_name, benchmark_norm=norm, **vals)
+        return
+    for k, v in vals.items():
+        seen = getattr(prev, k)
+        if seen is None:
+            setattr(prev, k, v)
+        elif v is not None and abs(seen - v) > 0.01:
+            conflicts.setdefault(norm, []).append({"field": k, "seen": seen, "also": v})
+
+
 def _parse_twrr_returns(table, ctx):
     """Rows alternate: approach, then its benchmark, grouped under bare
     single-cell asset-class headers ('EQUITY', 'MULTI ASSET', ...)."""
     out = []
+    benchmarks, conflicts = {}, {}
     asset_class = None
     rows = _rows(table)[2:]   # skip the two header rows
     i = 0
@@ -420,8 +475,10 @@ def _parse_twrr_returns(table, ctx):
         for field_name, v in zip(RETURN_FIELDS, cleaned):
             setattr(r, field_name, v)
         out.append(r)
+        if bench_name:
+            _collect_benchmark(benchmarks, conflicts, bench_name, bench_vals, ctx)
         i += 2
-    return out
+    return out, list(benchmarks.values()), conflicts
 
 
 def _parse_complaints(table, filing, ctx):
@@ -453,7 +510,11 @@ def parse_filing(content: bytes, reg_no_hint: str, as_on) -> SebiFiling:
     filing.approach_aum = _parse_approach_aum(tables[5], ctx)
     filing.approach_flow = _parse_approach_flows(tables[6], ctx)
     _parse_turnover_summary(tables[7], filing, ctx)
-    filing.approach_return = _parse_twrr_returns(tables[8], ctx)
+    filing.approach_return, filing.benchmark_return, filing.benchmark_conflicts = \
+        _parse_twrr_returns(tables[8], ctx)
+    if filing.benchmark_conflicts:
+        log.warning("%s: benchmark disagreement across approaches: %s",
+                    ctx, filing.benchmark_conflicts)
     filing.approach_turnover = _parse_approach_turnover(tables[9], ctx)
     _parse_complaints(tables[18], filing, ctx)
     _check_approach_sets_agree(filing, ctx)
