@@ -11,9 +11,11 @@ from pathlib import Path
 
 import requests
 
-from . import config
+from . import config, dns_fallback
 
 log = logging.getLogger(__name__)
+
+dns_fallback.install(config.DNS_FALLBACK)
 
 
 class PoliteSession:

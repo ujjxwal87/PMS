@@ -17,6 +17,9 @@ RAW_DIR = _path(os.getenv("PMS_RAW_DIR", "ingest/raw"))
 REQUEST_DELAY_SEC = float(os.getenv("PMS_REQUEST_DELAY_SEC", "2.0"))
 MAX_RETRIES = int(os.getenv("PMS_MAX_RETRIES", "4"))
 USER_AGENT = os.getenv("PMS_USER_AGENT", "bunker-o-billionaire-ingest/0.1")
+# Public resolver to retry against when the system one fails outright. Empty =
+# off; see pms_ingest/dns_fallback.py.
+DNS_FALLBACK = os.getenv("PMS_DNS_FALLBACK", "")
 
 APMI_BASE = "https://www.apmiindia.org/apmi"
 APMI_MENU = f"{APMI_BASE}/welcomeiaperformance.htm?action=PMSmenu"
