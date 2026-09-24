@@ -10,3 +10,4 @@ ingest/raw/
 ingest/__pycache__/
 *.pyc
 .venv/
+*.log

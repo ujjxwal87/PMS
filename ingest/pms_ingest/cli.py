@@ -4,6 +4,7 @@ import datetime as dt
 import json
 import logging
 import sys
+import time
 from dataclasses import asdict
 
 from . import config, db
@@ -14,6 +15,10 @@ from . import sebi as sebi_mod
 from . import reconcile as rec
 
 log = logging.getLogger("pms_ingest")
+
+# Consecutive slice failures before a backfill stops treating them as bad
+# filings and starts waiting for the network to come back.
+OUTAGE_AFTER = 5
 
 
 def _month(s: str) -> dt.date:
@@ -198,6 +203,21 @@ def load_sebi_filing(conn, session, pmr_id, reg_no, as_on, run_id):
     return len(by_norm), inserted, changed, False
 
 
+def _record_failure(conn, run_id, error: str) -> None:
+    """Mark a run failed, but never let the bookkeeping outlive the work.
+
+    When the network drops, the fetch and this write fail together -- and an
+    exception raised in the handler escapes it, which is how --keep-going came
+    to die on a Wi-Fi blip 11,050 slices into a 14,973-slice backfill.
+    """
+    try:
+        conn.rollback()
+        db.finish_run(conn, run_id, status="failed", error=error[:2000])
+        conn.commit()
+    except Exception as e:
+        log.warning("could not record run %s as failed (%s: %s)", run_id, type(e).__name__, e)
+
+
 def cmd_backfill_sebi(args):
     session = PoliteSession()
     if args.no_refresh_managers:
@@ -228,6 +248,7 @@ def cmd_backfill_sebi(args):
     with db.connect_short() as conn:
         done = db.completed_slices(conn, "sebi") if not args.force else set()
     n = 0
+    consecutive_failures = 0
     for as_on in months:
         for pmr_id, reg_no, name in listing:
             params = {"reg_no": reg_no}
@@ -240,31 +261,56 @@ def cmd_backfill_sebi(args):
             # Fresh connection per manager-month -- see db.connect_short: a
             # single connection held across a run this long (tens of thousands
             # of requests) reliably dies against Supabase's pooler.
-            with db.connect_short() as conn:
-                run_id = db.start_run(conn, "sebi", as_on, params)
-                conn.commit()
-                try:
-                    appr, new, rev, nofile = load_sebi_filing(
-                        conn, session, pmr_id, reg_no, as_on, run_id)
+            #
+            # The outer try covers connect_short itself: when the network is
+            # gone, opening the connection fails before there is any run to
+            # mark failed, and that must not end the backfill either.
+            try:
+                with db.connect_short() as conn:
+                    run_id = db.start_run(conn, "sebi", as_on, params)
                     conn.commit()
-                    tot_appr += appr; tot_new += new; tot_rev += rev; tot_nofile += int(nofile)
-                    tag = "NO FILING" if nofile else f"{appr:3d} approaches new={new} rev={rev}"
-                    if n % 25 == 0 or nofile:
-                        print(f"  [{n}] {as_on} {reg_no} {name[:32]:32s} {tag}")
-                except sebi_mod.ParseAssertionError as e:
-                    conn.rollback()
-                    db.finish_run(conn, run_id, status="failed", error=str(e)[:2000])
-                    conn.commit()
-                    print(f"  [{n}] {as_on} {reg_no} {name[:32]:32s} ASSERTION FAILED: {e}")
-                    if not args.keep_going:
-                        raise SystemExit("stopping: verify before continuing")
-                except Exception as e:
-                    conn.rollback()
-                    db.finish_run(conn, run_id, status="failed", error=f"{type(e).__name__}: {e}"[:2000])
-                    conn.commit()
-                    print(f"  [{n}] {as_on} {reg_no} {name[:32]:32s} ERROR {type(e).__name__}: {e}")
-                    if not args.keep_going:
-                        raise
+                    try:
+                        appr, new, rev, nofile = load_sebi_filing(
+                            conn, session, pmr_id, reg_no, as_on, run_id)
+                        conn.commit()
+                        tot_appr += appr; tot_new += new; tot_rev += rev; tot_nofile += int(nofile)
+                        tag = "NO FILING" if nofile else f"{appr:3d} approaches new={new} rev={rev}"
+                        if n % 25 == 0 or nofile:
+                            print(f"  [{n}] {as_on} {reg_no} {name[:32]:32s} {tag}")
+                        consecutive_failures = 0
+                    except sebi_mod.ParseAssertionError as e:
+                        _record_failure(conn, run_id, str(e))
+                        print(f"  [{n}] {as_on} {reg_no} {name[:32]:32s} ASSERTION FAILED: {e}")
+                        if not args.keep_going:
+                            raise SystemExit("stopping: verify before continuing")
+                        # A filing this parser cannot read is not an outage.
+                        consecutive_failures = 0
+                    except Exception as e:
+                        _record_failure(conn, run_id, f"{type(e).__name__}: {e}")
+                        print(f"  [{n}] {as_on} {reg_no} {name[:32]:32s} ERROR {type(e).__name__}: {e}")
+                        if not args.keep_going:
+                            raise
+                        consecutive_failures += 1
+            except (SystemExit, KeyboardInterrupt):
+                raise
+            except Exception as e:
+                if not args.keep_going:
+                    raise
+                print(f"  [{n}] {as_on} {reg_no} {name[:32]:32s} NO DB {type(e).__name__}: {e}")
+                consecutive_failures += 1
+
+            # A run of failures this long is an outage, not bad filings. Racing
+            # on would burn thousands of slices marking each one failed and then
+            # finish "successfully" having fetched nothing, so wait it out --
+            # every slice stays unclaimed and a later pass picks it up anyway.
+            if consecutive_failures >= OUTAGE_AFTER:
+                wait = min(300.0, 15.0 * 2 ** (consecutive_failures - OUTAGE_AFTER))
+                if consecutive_failures == OUTAGE_AFTER:
+                    print(f"  ...{consecutive_failures} failures in a row; "
+                          f"treating this as an outage and waiting for the network")
+                log.warning("outage backoff: sleeping %.0fs after %d consecutive failures",
+                            wait, consecutive_failures)
+                time.sleep(wait)
     print(f"\ntotal: {tot_appr} approach-rows, {tot_new} new, {tot_rev} revised, "
           f"{tot_nofile} no-filing slices")
 
